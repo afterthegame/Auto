@@ -43,8 +43,8 @@ public class Auto {
             System.exit(-1);
         }
         
-        guiController = new GuiController();
         userController = new UserController(statement);
+        guiController = new GuiController(userController);
         try {
             inputDataController = new InputDataController(statement);
         } catch(SQLException e) {
@@ -56,7 +56,9 @@ public class Auto {
         guiController.addFrame("carInfo", new CarInfo(guiController, inputDataController));
         guiController.addFrame("usageConditions", new UsageConditions(guiController, inputDataController));       
         guiController.addFrame("components", new Components(guiController, inputDataController));       
-        guiController.addFrame("repair", new Repair(guiController, inputDataController));
-        guiController.changeFrame("menu");
+        guiController.addFrame("repair", new Repair(guiController, inputDataController));       
+        guiController.addFrame("users", new Users(guiController, userController));
+        guiController.addFrame("registration", new Registration(guiController, userController));
+        guiController.changeFrame("auth");
     }
 }

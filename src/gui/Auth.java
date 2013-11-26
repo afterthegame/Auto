@@ -63,6 +63,11 @@ public class Auth extends javax.swing.JFrame {
         });
 
         signIn.setText("Регистрация");
+        signIn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                signInActionPerformed(evt);
+            }
+        });
 
         password.setToolTipText("");
 
@@ -144,6 +149,10 @@ public class Auth extends javax.swing.JFrame {
         }
         controller.changeFrame("menu");
     }//GEN-LAST:event_signUpActionPerformed
+
+    private void signInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signInActionPerformed
+        controller.changeFrame("registration");
+    }//GEN-LAST:event_signInActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JFormattedTextField jFormattedTextField1;
