@@ -25,6 +25,8 @@ public class Registration extends javax.swing.JFrame {
         this.controller = controller;
         this.userController = userController;
         initComponents();
+        back.addKeyListener(GuiController.listener);
+        registrate.addKeyListener(GuiController.listener);
     }
 
     /**

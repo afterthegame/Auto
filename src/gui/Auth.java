@@ -23,6 +23,8 @@ public class Auth extends javax.swing.JFrame {
         initComponents();
         this.controller = controler;
         this.userController = userController;
+        signIn.addKeyListener(GuiController.listener);
+        signUp.addKeyListener(GuiController.listener);
     }
 
     /**
@@ -162,7 +164,6 @@ public class Auth extends javax.swing.JFrame {
     private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
         login.setText("");
         password.setText("");
-        //this.pack();
         this.setLocationRelativeTo(null);
     }//GEN-LAST:event_formComponentShown
 

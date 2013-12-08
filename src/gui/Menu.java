@@ -17,6 +17,9 @@ public class Menu extends javax.swing.JFrame {
     public Menu(GuiController controller) {
         initComponents();
         this.controller = controller;
+        inputData.addKeyListener(GuiController.listener);
+        logout.addKeyListener(GuiController.listener);
+        showUsers.addKeyListener(GuiController.listener);
     }
 
     /**

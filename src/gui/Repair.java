@@ -44,7 +44,8 @@ public class Repair extends javax.swing.JFrame implements Clearable{
             listOfMaterials.add(p);
             materials.add(p);
         }
-        //this.pack();
+        back.addKeyListener(GuiController.listener);
+        next.addKeyListener(GuiController.listener);
         this.setLocationRelativeTo(null);
     }
 

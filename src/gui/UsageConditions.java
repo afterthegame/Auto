@@ -47,7 +47,8 @@ public class UsageConditions extends javax.swing.JFrame implements Clearable {
             damages.add(box);
             damageChecks.add(box);
         }
-        //this.pack();
+        back.addKeyListener(GuiController.listener);
+        next.addKeyListener(GuiController.listener);
         this.setLocationRelativeTo(null);
     }
 

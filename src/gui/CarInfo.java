@@ -36,7 +36,8 @@ public class CarInfo extends javax.swing.JFrame implements Clearable {
             body.addItem(n);
         }
         body.setSelectedIndex(0);
-        //this.pack();
+        back.addKeyListener(GuiController.listener);
+        next.addKeyListener(GuiController.listener);
         this.setLocationRelativeTo(null);
     }
 

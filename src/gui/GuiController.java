@@ -5,8 +5,11 @@
 package gui;
 
 import auto.UserController;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.HashMap;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 
 
@@ -16,6 +19,24 @@ public class GuiController {
     private JFrame currentFrame = null;
     private HashMap<String, JFrame> map;
     private ArrayList<Clearable> clearables;
+    
+    public static KeyListener listener = new KeyListener() {
+
+        @Override
+        public void keyTyped(KeyEvent e) {
+            
+        }
+
+        @Override
+        public void keyPressed(KeyEvent e) {
+            ((JButton)e.getSource()).doClick();
+        }
+
+        @Override
+        public void keyReleased(KeyEvent e) {
+            
+        }
+    };
     
     public GuiController(UserController userController) {
         this.userController = userController;

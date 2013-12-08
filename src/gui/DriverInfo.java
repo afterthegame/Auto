@@ -23,7 +23,8 @@ public class DriverInfo extends javax.swing.JFrame implements Clearable {
         initComponents();
         this.controller = controller;
         this.inputDataController = inputDataController;
-        //this.pack();
+        back.addKeyListener(GuiController.listener);
+        next.addKeyListener(GuiController.listener);
         this.setLocationRelativeTo(null);
     }
 

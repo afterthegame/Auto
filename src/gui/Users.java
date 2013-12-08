@@ -42,6 +42,8 @@ public class Users extends javax.swing.JFrame implements Action {
         jTable1.getColumnModel().getColumn(2).setMaxWidth(10);
         this.controller = controler;
         this.userController = userController;
+        back.addKeyListener(GuiController.listener);
+        addUser.addKeyListener(GuiController.listener);
     }
 
     @Override
