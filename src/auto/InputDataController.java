@@ -30,12 +30,12 @@ public class InputDataController {
     private ArrayList<UsageConditionFactor> usageConditions;
     private ArrayList<UsageConditionFactor> damages;
     
-    public int year = 0;
-    public float mass = 0;
-    public CarModel modelId = null;
-    public void setModel(int b, int m) {
-        modelId = models.get(brands.get(b)).get(m);
-    }
+    //public int year = 0;
+    //public float mass = 0;
+    //public CarModel modelId = null;
+    //public void setModel(int b, int m) {
+    //    modelId = models.get(brands.get(b)).get(m);
+    //}
     
     public InputDataController(Statement statement) throws SQLException {
         this.statement = statement;
@@ -186,10 +186,10 @@ public class InputDataController {
     
     public ArrayList<String> getEquipments() {
         ArrayList<String> names = new ArrayList<String>();
-        ArrayList<CarComponent> c = equipments.get(modelId);
+        ArrayList<CarComponent> c = equipments.get(inputData.model);
         if(c == null) {
             String query = "SELECT DISTINCT id, name, price FROM equipments "
-                    + "WHERE model_id=\""+modelId.getId()+"\";";
+                    + "WHERE model_id=\""+inputData.model.getId()+"\";";
             try(ResultSet result = statement.executeQuery(query)) {
                 c = new ArrayList<CarComponent>();
                 while(result.next()) {
@@ -197,9 +197,9 @@ public class InputDataController {
                             result.getInt("id"), 
                             result.getString("name"),
                             result.getFloat("price"),
-                            modelId));
+                            inputData.model));
                 }
-                equipments.put(modelId, c);
+                equipments.put(inputData.model, c);
             } catch (SQLException e) {
                 return null;
             }
@@ -237,7 +237,7 @@ public class InputDataController {
     }
     
     public void setCarInfo(int brand, int model, int body, int year,
-                           float volume, int region, float tax) {
+                           float volume, int region, float tax, float mass, float mileage) {
         inputData.brand = brands.get(brand);
         inputData.model = models.get(brands.get(brand)).get(model);
         inputData.body = bodies.get(body);
@@ -245,6 +245,8 @@ public class InputDataController {
         inputData.region = region;
         inputData.engineVolume = volume;
         inputData.tax = tax;
+        inputData.mileage = mileage;
+        inputData.mass = mass;
     }
     
     public void setUsageConditions(ArrayList<Boolean> usageConsitionSelections, 
@@ -322,245 +324,6 @@ public class InputDataController {
         return inputData.getDamage();
     }
     
-    public float getMaterialsCost(ArrayList<Float> counts) {
-        float S=0;
-        for(int i=0; i<materials.size(); i++) {
-            Float f = counts.get(i);
-            if(f == null) {
-                continue;
-            }
-            S += f*materials.get(i).getPrice();
-        }
-        return S;
-    }
     
-    public float getComponentsCost(ArrayList<Integer> counts) {
-        float S=0;
-        ArrayList<CarComponent> c = components.get(modelId);
-        for(int i=0; i<c.size(); i++) {
-            Integer f = counts.get(i);
-            if(f == null) {
-                continue;
-            }
-            S += f*c.get(i).getPrice();
-        }
-        return S;
-    }
-    
-    public float getRapairCost(float hours) {
-        float S = 0, factor;
-        String query = "SELECT * FROM repair_cost WHERE model_id="+modelId.getId()+";";
-        try(ResultSet result = statement.executeQuery(query)) {
-            if(!result.next()) {
-                System.out.println("repair not found");
-                return 0;
-            }
-            factor = result.getFloat("val");
-        } catch (SQLException e) {
-            System.out.println("factor exceprion");
-            return 0;
-        }
-        S = factor * hours;
-        return S;
-    }
-    
-    public float getIncreasePrice(ArrayList<Integer> selectedComponents) {
-        String query = "SELECT val FROM price_factors WHERE mass >= "+mass
-                + " AND year=YEAR(CURDATE())-"+year+" ORDER BY mass ASC LIMIT 1;";
-        float factor = 0, S = 0;
-        try(ResultSet result = statement.executeQuery(query)) {
-            if(!result.next()) {
-                System.out.println("price factor not found");
-                return 0;
-            }
-            factor = result.getFloat("val");
-        } catch (SQLException e) {
-            System.out.println("factor exceprion");
-            return 0;
-        }
-        for(Integer i : selectedComponents) {
-            CarComponent c = components.get(modelId).get(i);
-            S += c.getPrice()*factor/100;
-        }
-        return S;
-    }
-    
-    public float getEquipmentPrice(ArrayList<Pair<Integer, Integer>> selectedEquipments) {
-        float S = 0;
-        ArrayList<CarComponent> e = equipments.get(modelId);
-        for(Pair p : selectedEquipments) {
-            int t = (int)p.second > 95 ? 95 : (int)p.second;
-            S += 0.7*e.get((int)p.first).getPrice()*Math.pow(0.97, t);
-        }
-        return S;
-    }
-    
-    public Float getAveragePrice(int brandIndex, int modelIndex, int year, float volume,
-            int bodyIndex, float tax, int region) {
-        CarBrand brand = brands.get(brandIndex);
-        CarModel model = models.get(brand).get(modelIndex);
-        CarBody body = bodies.get(bodyIndex);
-        boolean fullOverlap = true;
-        float editionPrice=0, yearFactor=0, regionFactor=0, price=0;
-        Float value = null;
-        String query = "SELECT price FROM editions WHERE model_id="+model.getId()+
-                " AND volume="+volume+" AND year="+year+" AND body_id="+body.getId()+";";
-        try(ResultSet result = statement.executeQuery(query)) {
-            if(!result.next()) {
-                fullOverlap = false;
-            } else {
-                editionPrice = result.getFloat("price");
-            }
-        } catch (SQLException e) {
-            return null;
-        }
-        
-        if(!fullOverlap) {
-            return getAveragePriceByAnalogs(model, year, tax, region);
-        }
-        System.out.println("price: "+editionPrice);
-        
-        query = "SELECT y.val FROM models m JOIN year_factors y "
-                + "ON m.year_factor=y.id WHERE m.id="+model.getId()
-                + " AND y.year=YEAR(CURDATE())-"+year+";";
-        try(ResultSet result = statement.executeQuery(query)) {
-            if(!result.next()) {
-                return null;
-            }
-            yearFactor = result.getFloat("val");
-        } catch (SQLException e) {
-            return null;
-        }
-        
-        System.out.println("year factor: "+yearFactor);
-        
-        value = getRegionFactor(model.getId(), region);
-        if(value == null) {
-            return null;
-        }
-        regionFactor = value;
-        
-        System.out.println("region factor: "+regionFactor);
-        
-        price = editionPrice * yearFactor * regionFactor + tax;
-        
-        return price;
-    }
-    
-    public float getUsageConditionsFactor(int year,
-            ArrayList<Boolean> usageConditionsSelections, 
-            ArrayList<Boolean> damagesSelections) {
-        float factor = 0;
-        for(int i=0; i<usageConditions.size(); i++) {
-            if(usageConditionsSelections.get(i)) {
-                factor += usageConditions.get(i).getValue();
-            }
-        }
-        float bodyDamage = 0;
-        for(int i=0; i<damages.size(); i++) {
-            if(damagesSelections.get(i)) {
-                bodyDamage += damages.get(i).getValue();
-            }
-        }
-        if(Calendar.getInstance().get(Calendar.YEAR) - year > 8) {
-            bodyDamage /= 2;
-        }
-        if(bodyDamage > 30) {
-            bodyDamage = 30;
-        }
-        return factor + bodyDamage;
-    }
-    
-    //TODO учитывается не для всех категорий машин
-    public float getMileageFactor(int year, float mass, int mileage) {
-        String query = "SELECT val FROM mileages WHERE year=YEAR(CURDATE())-"+year+";";
-        int normalMileage = 0;
-        int difference, direction = 0;
-        float factor;
-        try(ResultSet result = statement.executeQuery(query)) {
-            if(!result.next()) {
-                System.out.println("normalMileage not found");
-                return 0;
-            }
-            normalMileage = result.getInt("val");
-        } catch (SQLException e) {
-            System.out.println("normalMileage exceprion");
-            return 0;
-        }
-        difference = normalMileage - mileage;
-        if(difference > 0) {
-            direction = 1;
-        }
-        difference = Math.abs(difference);
-        query = "SELECT val FROM mileage_factors WHERE mass >= "+mass+""
-                + " AND direction = "+direction+" ORDER BY mass ASC, "
-                + "ABS("+difference+"-difference) ASC LIMIT 1;";
-        try(ResultSet result = statement.executeQuery(query)) {
-            if(!result.next()) {
-                System.out.println("factor not found");
-                return 0;
-            }
-            factor = result.getFloat("val");
-        } catch (SQLException e) {
-            System.out.println("factor exceprion");
-            return 0;
-        }
-        return factor;
-    }
-    
-    private Float getAveragePriceByAnalogs(CarModel model, int year, float tax, int region) {
-        float averagePrice = 0, wearFactor=0;
-        int amount = 0;
-        Float regionFactor = getRegionFactor(model.getId(), region);
-        if(regionFactor == null) {
-            return null;
-        }
-        System.out.println("Analog!");
-        System.out.println("region factor: "+regionFactor);
-        String query = "SELECT w.val FROM models m JOIN wear_factors w "
-                + "ON m.wear_factor=w.id WHERE m.id="+model.getId()+";";
-        try(ResultSet result = statement.executeQuery(query)) {
-            if(!result.next()) {
-                return null;
-            }
-            wearFactor = result.getFloat("val");
-        } catch (SQLException e) {
-            return null;
-        }
-        System.out.println("wear factor: "+wearFactor);
-        
-        query = "SELECT price FROM editions WHERE model_id="+model.getId()+
-                " AND year BETWEEN YEAR(CURDATE())-"+year+" AND YEAR(CURDATE())+"
-                +year+";";
-        try(ResultSet result = statement.executeQuery(query)) {
-            while(result.next()) {
-                averagePrice += result.getFloat("price") * wearFactor * regionFactor + tax;
-                System.out.println("Price: "+result.getFloat("price"));
-                amount++;
-            }
-        } catch (SQLException e) {
-            return null;
-        }
-        
-        if(amount == 0) {
-            return null;
-        }
-        return averagePrice / amount;
-    }
-    
-    private Float getRegionFactor(int modelId, int region) {
-        float factor;
-        String query = "SELECT r.* FROM models m JOIN region_factors r "
-                + "ON m.region_factor=r.id WHERE m.id="+modelId+";";
-        try(ResultSet result = statement.executeQuery(query)) {
-            if(!result.next()) {
-                return null;
-            }
-            factor = result.getFloat(regionName[region]);
-        } catch (SQLException e) {
-            return null;
-        }
-        return factor;
-    }
     
 }

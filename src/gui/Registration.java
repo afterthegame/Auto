@@ -153,6 +153,8 @@ public class Registration extends javax.swing.JFrame {
         fio.setText("");
         pass.setText("");
         confirmPass.setText("");
+        //this.pack();
+        this.setLocationRelativeTo(null);
     }//GEN-LAST:event_formComponentShown
 
     private void registrateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registrateActionPerformed

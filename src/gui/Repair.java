@@ -19,12 +19,13 @@ import javax.swing.JTextField;
  *
  * @author gorz
  */
-public class Repair extends javax.swing.JFrame {
+public class Repair extends javax.swing.JFrame implements Clearable{
 
     private GuiController controller;
     private InputDataController inputDataController;
     private ArrayList<Panel> listOfMaterials;
     private ArrayList<Panel> listOfComponents;
+    private boolean needUpdate = true;
     /**
      * Creates new form Repair
      */
@@ -43,6 +44,8 @@ public class Repair extends javax.swing.JFrame {
             listOfMaterials.add(p);
             materials.add(p);
         }
+        //this.pack();
+        this.setLocationRelativeTo(null);
     }
 
     /**
@@ -244,32 +247,34 @@ public class Repair extends javax.swing.JFrame {
                     "Ошибка: "+e.getMessage()
             );
         }
-        /*JOptionPane.showMessageDialog(this, 
-                ""+inputDataController.getRapairCost(Float.valueOf(repair.getText())));
-
-        JOptionPane.showMessageDialog(this, 
-                ""+inputDataController.getMaterialsCost(seletedMaterials));
-
-        JOptionPane.showMessageDialog(this, 
-                ""+inputDataController.getComponentsCost(seletedComponents));*/
     }//GEN-LAST:event_nextActionPerformed
 
     private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
+        if(needUpdate) {
+            ArrayList<String> c = inputDataController.getComponents();
+            for(String n : c) {
+                Panel p = new Panel(n);
+                p.setAlignmentX(LEFT_ALIGNMENT);
+                listOfComponents.add(p);
+                components.add(p);
+            }    
+            components.revalidate();
+            components.repaint();
+            needUpdate = false;
+        }
+    }//GEN-LAST:event_formComponentShown
+
+    @Override
+    public void clear() {
         components.removeAll();
         listOfComponents.clear();
         for(Panel p : listOfMaterials) {
             p.uncheck();
             p.count.setText("0");
         }
-        ArrayList<String> c = inputDataController.getComponents();
-        for(String n : c) {
-            Panel p = new Panel(n);
-            p.setAlignmentX(LEFT_ALIGNMENT);
-            listOfComponents.add(p);
-            components.add(p);
-        }        
-    }//GEN-LAST:event_formComponentShown
-
+        needUpdate = true;
+    }
+    
     class Panel extends JPanel {
         JCheckBox box;
         JTextField count;

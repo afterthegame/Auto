@@ -12,7 +12,7 @@ import javax.swing.JOptionPane;
  *
  * @author gorz
  */
-public class CarInfo extends javax.swing.JFrame {
+public class CarInfo extends javax.swing.JFrame implements Clearable {
 
     private GuiController controller;
     private InputDataController inputDataController;
@@ -36,6 +36,8 @@ public class CarInfo extends javax.swing.JFrame {
             body.addItem(n);
         }
         body.setSelectedIndex(0);
+        //this.pack();
+        this.setLocationRelativeTo(null);
     }
 
     /**
@@ -70,11 +72,6 @@ public class CarInfo extends javax.swing.JFrame {
         mileage = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        addComponentListener(new java.awt.event.ComponentAdapter() {
-            public void componentShown(java.awt.event.ComponentEvent evt) {
-                formComponentShown(evt);
-            }
-        });
 
         title.setText("Информация о машине");
 
@@ -231,12 +228,20 @@ public class CarInfo extends javax.swing.JFrame {
     private void backActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backActionPerformed
         controller.changeFrame("driverInfo");
     }//GEN-LAST:event_backActionPerformed
-
-    private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
+    
+    @Override
+    public void clear() {
         brand.setSelectedIndex(0);
         body.setSelectedIndex(0);
-    }//GEN-LAST:event_formComponentShown
-
+        volume.setText("");
+        year.setText("");
+        body.setSelectedIndex(0);
+        mass.setText("");
+        mileage.setText("");
+        region.setSelectedIndex(0);
+        tax.setText("");
+    }
+    
     private void brandItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_brandItemStateChanged
         ArrayList<String> models = inputDataController.getModels(brand.getSelectedIndex());
         model.removeAllItems();
@@ -250,39 +255,65 @@ public class CarInfo extends javax.swing.JFrame {
     }//GEN-LAST:event_brandItemStateChanged
 
     private void nextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextActionPerformed
+        int yearVal;
+        float volumeVal, taxVal, massVal, mileageVal;
+        try {
+            yearVal = Integer.valueOf(year.getText());
+        } catch(NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Значение 'Год выпуска' должно быть целым числом!");
+            return;
+        }
+        if(yearVal < 1950) {
+            JOptionPane.showMessageDialog(this, "Значение 'Год выпуска' должно быть больше 1950!");
+            return;
+        }
+        try {
+            volumeVal = Float.valueOf(volume.getText());
+        } catch(NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Значение 'Объем двигателя' должно быть числом!");
+            return;
+        }
+        if(volumeVal <= 0) {
+            JOptionPane.showMessageDialog(this, "Значение 'Объем двигателя' должно быть положительным!");
+            return;
+        }
+        try {
+            taxVal = Float.valueOf(tax.getText());
+        } catch(NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Значение 'Сумма налога' должно быть числом!");
+            return;
+        }
+        try {
+            massVal = Float.valueOf(mass.getText());
+        } catch(NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Значение 'Масса' должно быть числом!");
+            return;
+        }
+        if(massVal <= 0) {
+            JOptionPane.showMessageDialog(this, "Значение 'Масса' должно быть положительным!");
+            return;
+        }
+        try {
+            mileageVal = Float.valueOf(mileage.getText());
+        } catch(NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Значение 'Пробег' должно быть числом!");
+            return;
+        }
+        if(mileageVal < 0) {
+            JOptionPane.showMessageDialog(this, "Значение 'Пробег' должно быть положительным!");
+            return;
+        }
         inputDataController.setCarInfo(
                     brand.getSelectedIndex(),
                     model.getSelectedIndex(),
                     body.getSelectedIndex(),
-                    Integer.valueOf(year.getText()),
-                    Float.valueOf(volume.getText()),
+                    yearVal,
+                    volumeVal,
                     region.getSelectedIndex(),
-                    Float.valueOf(tax.getText())
+                    taxVal,
+                    massVal,
+                    mileageVal
                 );
-        /*Float price = inputDataController.getAveragePrice(
-                brand.getSelectedIndex(),
-                model.getSelectedIndex(),
-                Integer.valueOf(year.getText()),
-                Float.valueOf(volume.getText()),
-                body.getSelectedIndex(),
-                Float.valueOf(tax.getText()),
-                region.getSelectedIndex()
-                );
-        if(price == null) {
-            JOptionPane.showMessageDialog(this, "Сбой БД!");
-            return;
-        }
-        JOptionPane.showMessageDialog(this, "Средняя цена: "+price);
-        float f = inputDataController.getMileageFactor(
-                Integer.valueOf(year.getText()), 
-                Float.valueOf(mass.getText()),
-                Integer.valueOf(mileage.getText()));
-        JOptionPane.showMessageDialog(this, "Гк: "+f);*/
-        inputDataController.year = Integer.valueOf(year.getText());
-        inputDataController.mass = Float.valueOf(mass.getText());
-        inputDataController.setModel(
-                brand.getSelectedIndex(),
-                model.getSelectedIndex());
         controller.changeFrame("usageConditions");
     }//GEN-LAST:event_nextActionPerformed
 

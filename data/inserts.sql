@@ -1,10 +1,17 @@
+INSERT INTO users (login, password, fio, type, reg) VALUES ("root", "root", "root", TRUE, TRUE);
+
 INSERT INTO brands (name) VALUES ("BMW");
 INSERT INTO brands (name) VALUES ("Ford");
 
-INSERT INTO models (name, brand_id, wear_factor, year_factor, region_factor) VALUES ("M3", 1, 1, 1, 1);
-INSERT INTO models (name, brand_id, wear_factor, year_factor, region_factor) VALUES ("M5", 1, 2, 2, 1);
-INSERT INTO models (name, brand_id, wear_factor, year_factor, region_factor) VALUES ("Focus", 2, 3, 3, 1);
-INSERT INTO models (name, brand_id, wear_factor, year_factor, region_factor) VALUES ("Transit", 2, 4, 4, 1);
+INSERT INTO models (name, brand_id, wear_factor, year_factor, region_factor, category_id) VALUES ("M3", 1, 1, 1, 1, 1);
+INSERT INTO models (name, brand_id, wear_factor, year_factor, region_factor, category_id) VALUES ("M5", 1, 2, 2, 1, 1);
+INSERT INTO models (name, brand_id, wear_factor, year_factor, region_factor, category_id) VALUES ("Focus", 2, 3, 3, 1, 1);
+INSERT INTO models (name, brand_id, wear_factor, year_factor, region_factor, category_id) VALUES ("Transit", 2, 4, 4, 1, 3);
+
+INSERT INTO bodies(name) VALUES ("Седан");
+INSERT INTO bodies(name) VALUES ("Хетчбек");
+INSERT INTO bodies(name) VALUES ("Универсал");
+INSERT INTO bodies(name) VALUES ("Мнивэн");
 
 INSERT INTO editions (year, volume, price, model_id, body_id) VALUES (2010, 2.66, 2000.00, 1, 1);
 INSERT INTO editions (year, volume, price, model_id, body_id) VALUES (2011, 3.2, 10000.00, 1, 2);
@@ -12,11 +19,6 @@ INSERT INTO editions (year, volume, price, model_id, body_id) VALUES (2012, 2.66
 INSERT INTO editions (year, volume, price, model_id, body_id) VALUES (2012, 3.6, 8000.00, 3, 2);
 INSERT INTO editions (year, volume, price, model_id, body_id) VALUES (2011, 2.66, 9000.00, 3, 1);
 INSERT INTO editions (year, volume, price, model_id, body_id) VALUES (2010, 3.66, 15000.00, 4, 4);
-
-INSERT INTO bodies(name) VALUES ("Седан");
-INSERT INTO bodies(name) VALUES ("Хетчбек");
-INSERT INTO bodies(name) VALUES ("Универсал");
-INSERT INTO bodies(name) VALUES ("Мнивэн");
 
 INSERT INTO wear_factors(val) VALUES (0.95);
 INSERT INTO wear_factors(val) VALUES (0.9);
@@ -98,7 +100,7 @@ INSERT INTO materials(name, price) VALUES ("Шпаклевка", 100);
 INSERT INTO materials(name, price) VALUES ("Карбон", 100);
 INSERT INTO materials(name, price) VALUES ("Пластик", 100);
 
-INSERT INTO categories(name, flag) VALUES ("Легковой автомобиль", TRUE);
+INSERT INTO categories(name, flag) VALUES ("Легковой автомобиль", FALSE);
 INSERT INTO categories(name, flag) VALUES ("Грузовой автомобить", FALSE);
 INSERT INTO categories(name, flag) VALUES ("Автобус", TRUE);
 INSERT INTO categories(name, flag) VALUES ("Мотоцикл", FALSE);

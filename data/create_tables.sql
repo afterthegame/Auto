@@ -37,7 +37,7 @@ CREATE TABLE editions (
 id INT PRIMARY KEY AUTO_INCREMENT,
 year INT NOT NULL,
 volume FLOAT(6, 3) NOT NULL,
-price FLOAT(6, 2) NOT NULL,
+price FLOAT(9, 2) NOT NULL,
 model_id INT NOT NULL,
 body_id INT NOT NULL,
 FOREIGN KEY(model_id) REFERENCES models(id),

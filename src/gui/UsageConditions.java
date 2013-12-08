@@ -15,7 +15,7 @@ import javax.swing.JOptionPane;
  *
  * @author gorz
  */
-public class UsageConditions extends javax.swing.JFrame {
+public class UsageConditions extends javax.swing.JFrame implements Clearable {
 
     
     private GuiController controller;
@@ -47,6 +47,8 @@ public class UsageConditions extends javax.swing.JFrame {
             damages.add(box);
             damageChecks.add(box);
         }
+        //this.pack();
+        this.setLocationRelativeTo(null);
     }
 
     /**
@@ -69,11 +71,6 @@ public class UsageConditions extends javax.swing.JFrame {
         next = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        addComponentListener(new java.awt.event.ComponentAdapter() {
-            public void componentShown(java.awt.event.ComponentEvent evt) {
-                formComponentShown(evt);
-            }
-        });
 
         jLabel1.setText("Условия испольщования");
 
@@ -170,15 +167,16 @@ public class UsageConditions extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
+    @Override
+    public void clear() {
         for(JCheckBox c : usageConditionChecks) {
             c.setSelected(false);
         }
         for(JCheckBox c : damageChecks) {
             c.setSelected(false);
         }
-    }//GEN-LAST:event_formComponentShown
-
+    }
+    
     private void backActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backActionPerformed
         controller.changeFrame("carInfo");
     }//GEN-LAST:event_backActionPerformed

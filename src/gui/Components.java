@@ -19,7 +19,7 @@ import javax.swing.JTextField;
  *
  * @author gorz
  */
-public class Components extends javax.swing.JFrame {
+public class Components extends javax.swing.JFrame implements Clearable{
 
     private GuiController controller;
     private InputDataController inputDataController;
@@ -29,6 +29,7 @@ public class Components extends javax.swing.JFrame {
     private ArrayList<String> equipmentsNames = null;
     private ArrayList<EqPanel> panelsComponents = null;
     private ArrayList<EqPanel> panelsEquipments = null;
+    private boolean needUpdate = true;
     /**
      * Creates new form Components
      */
@@ -41,7 +42,9 @@ public class Components extends javax.swing.JFrame {
         panelsComponents = new ArrayList<EqPanel>();
         panelsEquipments = new ArrayList<EqPanel>();
         components.setLayout(new BoxLayout(components, BoxLayout.Y_AXIS));
-        equipments.setLayout(new BoxLayout(equipments, BoxLayout.Y_AXIS));
+        equipments.setLayout(new BoxLayout(equipments, BoxLayout.Y_AXIS));                
+        //this.pack();
+        this.setLocationRelativeTo(null);
     }
 
     /**
@@ -197,25 +200,19 @@ public class Components extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
+    @Override
+    public void clear() {
+        needUpdate = true;
         listOfComponents.removeAllItems();
-        componentsNames = inputDataController.getComponents();
-        for(String name : componentsNames) {
-            listOfComponents.addItem(name);
-        }
         listOfEquipments.removeAllItems();
-        equipmentsNames = inputDataController.getEquipments();
-        for(String name : equipmentsNames) {
-            listOfEquipments.addItem(name);
-        }
         selectedComponents.clear();
         selectedEquipments.clear();
         panelsComponents.clear();
         panelsEquipments.clear();
         components.removeAll();
         equipments.removeAll();
-    }//GEN-LAST:event_formComponentShown
-
+    }
+    
     private void addComponentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addComponentActionPerformed
         int index = listOfComponents.getSelectedIndex();
         selectedComponents.add(new Pair(index, 1));
@@ -233,10 +230,6 @@ public class Components extends javax.swing.JFrame {
         for(int i = 0; i<selectedComponents.size(); i++) {
             selectedComponents.get(i).second = panelsComponents.get(i).getCount();
         }
-        /*JOptionPane.showMessageDialog(
-                this, 
-                "СВ1 = "+inputDataController.getIncreasePrice(selectedComponents)
-                +"\nСВ2 = "+inputDataController.getEquipmentPrice(selectedEquipments));*/
         inputDataController.setComponentsAndEquipments(
                 selectedComponents, 
                 selectedEquipments);
@@ -256,6 +249,20 @@ public class Components extends javax.swing.JFrame {
         equipments.add(panel);
         equipments.revalidate();
     }//GEN-LAST:event_addEquipmentActionPerformed
+
+    private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
+        if(needUpdate) {
+            componentsNames = inputDataController.getComponents();
+            for(String name : componentsNames) {
+                listOfComponents.addItem(name);
+            }
+            equipmentsNames = inputDataController.getEquipments();
+            for(String name : equipmentsNames) {
+                listOfEquipments.addItem(name);
+            }   
+            needUpdate = false;
+        }
+    }//GEN-LAST:event_formComponentShown
 
     class EqPanel extends JPanel {
         JTextField count;

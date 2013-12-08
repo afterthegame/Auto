@@ -175,6 +175,8 @@ public class Users extends javax.swing.JFrame implements Action {
         model.setUsers(users);
         jTable1.revalidate();
         jTable1.repaint();
+        //this.pack();
+        this.setLocationRelativeTo(null);
     }//GEN-LAST:event_formComponentShown
 
     private void addUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addUserActionPerformed

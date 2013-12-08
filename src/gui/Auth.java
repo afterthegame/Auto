@@ -48,6 +48,11 @@ public class Auth extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                formComponentShown(evt);
+            }
+        });
 
         title.setText("Авторизация");
 
@@ -153,6 +158,13 @@ public class Auth extends javax.swing.JFrame {
     private void signInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signInActionPerformed
         controller.changeFrame("registration");
     }//GEN-LAST:event_signInActionPerformed
+
+    private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
+        login.setText("");
+        password.setText("");
+        //this.pack();
+        this.setLocationRelativeTo(null);
+    }//GEN-LAST:event_formComponentShown
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JFormattedTextField jFormattedTextField1;

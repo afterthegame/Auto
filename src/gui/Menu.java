@@ -97,11 +97,14 @@ public class Menu extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void inputDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inputDataActionPerformed
+        controller.clearForms();
         controller.changeFrame("driverInfo");
     }//GEN-LAST:event_inputDataActionPerformed
 
     private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
         showUsers.setEnabled(controller.isCurrentUserAdmin());
+        //this.pack();
+        this.setLocationRelativeTo(null);
     }//GEN-LAST:event_formComponentShown
 
     private void showUsersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showUsersActionPerformed
