@@ -126,9 +126,9 @@ public class Components extends javax.swing.JFrame implements Clearable, Action 
         ));
         jScrollPane1.setViewportView(components);
 
-        jLabel2.setText("Компоненты:");
+        jLabel2.setText("Обновленные компоненты:");
 
-        jLabel3.setText("Оборудование:");
+        jLabel3.setText("Обновленное оборудование:");
 
         addEquipment.setText("Добавить");
         addEquipment.addActionListener(new java.awt.event.ActionListener() {
@@ -175,10 +175,6 @@ public class Components extends javax.swing.JFrame implements Clearable, Action 
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(95, 95, 95))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -202,6 +198,10 @@ public class Components extends javax.swing.JFrame implements Clearable, Action 
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(next)))
                 .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel1)
+                .addGap(155, 155, 155))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -431,7 +431,5 @@ class EntityModel extends AbstractTableModel {
             super.setValueAt(aValue, rowIndex, columnIndex); 
         }
     }
-    
-    
-    
+      
 }

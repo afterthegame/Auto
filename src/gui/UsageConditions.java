@@ -73,7 +73,7 @@ public class UsageConditions extends javax.swing.JFrame implements Clearable {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jLabel1.setText("Условия испольщования");
+        jLabel1.setText("Условия использования");
 
         javax.swing.GroupLayout usageConditionsLayout = new javax.swing.GroupLayout(usageConditions);
         usageConditions.setLayout(usageConditionsLayout);
@@ -103,7 +103,7 @@ public class UsageConditions extends javax.swing.JFrame implements Clearable {
 
         jLabel2.setText("Дефекты кузова:");
 
-        jLabel3.setText("Условия хранения и эксплотации");
+        jLabel3.setText("Условия хранения и эксплуатации");
 
         back.setText("Назад");
         back.addActionListener(new java.awt.event.ActionListener() {
@@ -123,10 +123,6 @@ public class UsageConditions extends javax.swing.JFrame implements Clearable {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(189, 189, 189))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -142,6 +138,10 @@ public class UsageConditions extends javax.swing.JFrame implements Clearable {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(next)))
                 .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel1)
+                .addGap(204, 204, 204))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
