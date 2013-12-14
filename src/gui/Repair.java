@@ -217,6 +217,7 @@ public class Repair extends javax.swing.JFrame implements Clearable{
     }//GEN-LAST:event_backActionPerformed
 
     private void nextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextActionPerformed
+        float all = 0;
         ArrayList<Integer> seletedComponents = new ArrayList<Integer>();
         ArrayList<Component> m = componentsModel.get();
         try {
@@ -226,6 +227,7 @@ public class Repair extends javax.swing.JFrame implements Clearable{
                     if(i<0) {
                         throw new NumberFormatException();
                     }
+                    all += i;
                     seletedComponents.add(i);
                 } else {
                     seletedComponents.add(null);
@@ -244,6 +246,7 @@ public class Repair extends javax.swing.JFrame implements Clearable{
                     if(f<0) {
                         throw new NumberFormatException();
                     }
+                    all += f;
                     seletedMaterials.add(f);
                 } else {
                     seletedMaterials.add(null);
@@ -251,6 +254,10 @@ public class Repair extends javax.swing.JFrame implements Clearable{
             }
         } catch(NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "Количество материалов должно быть положительным числом");
+            return;
+        }
+        if(all <= 0) {
+            JOptionPane.showMessageDialog(this, "Должен быть выбран хотябы один материал или компонента!");
             return;
         }
         float repairVal;
@@ -281,7 +288,7 @@ public class Repair extends javax.swing.JFrame implements Clearable{
         inputDataController.setLiquidityFactor(
                 Float.valueOf(liquidity.getText()), 
                 !renewable.isSelected());
-        try {
+        /*try {
             JOptionPane.showMessageDialog(
                     this, 
                     "C = "+inputDataController.getCost()+"\n"+
@@ -293,7 +300,8 @@ public class Repair extends javax.swing.JFrame implements Clearable{
                     this, 
                     "Ошибка: "+e.getMessage()
             );
-        }
+        }*/
+        controller.changeFrame("preview");
     }//GEN-LAST:event_nextActionPerformed
 
     private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown

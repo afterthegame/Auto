@@ -55,6 +55,38 @@ public class InputData {
         statement = st;
     }
     
+    public String getDriver() {
+        return FIO;
+    }
+    
+    public String getNumber() {
+        return idNumber;
+    }
+    
+    public String getBrand() {
+        return brand.getName();
+    }
+    
+    public String getModel() {
+        return model.getName();
+    }
+    
+    public int getYear() {
+        return year;
+    }
+    
+    public float getMileage() {
+        return mileage;
+    }
+    
+    public float getMass() {
+        return mass;
+    }
+    
+    public float getVolume() {
+        return engineVolume;
+    }
+    
     public float getCost() throws Exception {
         cost = 0;
         System.out.println("AveragePrice");
@@ -173,10 +205,21 @@ public class InputData {
         return averagePrice / amount;
     }
      
-     //TODO учитывается не для всех категорий машин
      //коэф-т корректировки рыночной стоимости от величины пробега (Гк)
     private float getMileageFactor() throws Exception {
-        String query = "SELECT val FROM mileages"
+        String query = "SELECT flag FROM categories WHERE id="+model.getCategory()+";";
+        try(ResultSet result = statement.executeQuery(query)) {
+            if(!result.next()) {
+                throw new Exception("Ненайдена категория");
+            }
+            if(!result.getBoolean("flag")) {
+                return 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new Exception("Сбой БД!");
+        }
+        query = "SELECT val FROM mileages"
                 + " WHERE year=YEAR(CURDATE())-"+year+";";
         int normalMileage = 0;
         int difference, direction = 0;

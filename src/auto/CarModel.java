@@ -29,4 +29,8 @@ public class CarModel {
     public String getName() {
         return name;
     }
+    
+    public int getCategory() {
+        return category;
+    }
 }

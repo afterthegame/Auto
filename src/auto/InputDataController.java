@@ -230,6 +230,10 @@ public class InputDataController {
         inputData = new InputData(statement);
     }
     
+    public InputData getData() {
+        return inputData;
+    }
+    
     public void setDriverInfo(String fio, String dob, String idNumber) {
         inputData.FIO = fio;
         inputData.dateOfBirth = dob;
