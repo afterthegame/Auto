@@ -4,6 +4,7 @@
  */
 package auto;
 
+import gui.GuiController;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -30,7 +31,6 @@ public class InputData {
     CarBrand brand;
     CarModel model;
     CarBody body;
-    //CarCategory category;
     int year;
     float engineVolume;
     float mass;
@@ -151,9 +151,22 @@ public class InputData {
                 + " AND y.year=YEAR(CURDATE())-"+year+";";
         try(ResultSet result = statement.executeQuery(query)) {
             if(!result.next()) {
-                throw new Exception("Не найден коэффициент эксплуатации!");
+                boolean f = false;
+                do {
+                    String r = GuiController.query(
+                        "Не найден коэффициент эксплуатации!\nВведите вручную:"
+                        + " Модель: "+model.getName()+" Год выпуска: "+year
+                    );
+                    try {
+                        yearFactor = Float.valueOf(r);
+                    } catch(NumberFormatException e) {
+                        f = true;
+                    }
+                } while(f);
+                //throw new Exception("Не найден коэффициент эксплуатации!");
+            } else {
+                yearFactor = result.getFloat("val");
             }
-            yearFactor = result.getFloat("val");
         } catch (SQLException e) {
             throw new Exception("Сбой бд!");
         }
@@ -177,9 +190,22 @@ public class InputData {
                 + "ON m.wear_factor=w.id WHERE m.id="+model.getId()+";";
         try(ResultSet result = statement.executeQuery(query)) {
             if(!result.next()) {
-                throw new Exception("Ненайден коэфициент износа!");
+                boolean f = false;
+                do {
+                    String r = GuiController.query(
+                        "Ненайден коэфициент износа!\nВведите вручную:"
+                        + " Модель: "+model.getName()
+                    );
+                    try {
+                        wearFactor = Float.valueOf(r);
+                    } catch(NumberFormatException e) {
+                        f = true;
+                    }
+                } while(f);
+                //throw new Exception("Ненайден коэфициент износа!");
+            } else {
+                wearFactor = result.getFloat("val");
             }
-            wearFactor = result.getFloat("val");
         } catch (SQLException e) {
             throw new Exception("Сбой БД!");
         }
@@ -223,12 +249,25 @@ public class InputData {
                 + " WHERE year=YEAR(CURDATE())-"+year+";";
         int normalMileage = 0;
         int difference, direction = 0;
-        float factor;
+        float factor = 0;
         try(ResultSet result = statement.executeQuery(query)) {
             if(!result.next()) {
-                throw new Exception("Ненайден нормативная величина пробега");
+                boolean f = false;
+                do {
+                    String r = GuiController.query(
+                        "Ненайдена нормативная величина пробега!\nВведите вручную:"
+                        + " Год выпуска: "+year
+                    );
+                    try {
+                        normalMileage = Integer.valueOf(r);
+                    } catch(NumberFormatException e) {
+                        f = true;
+                    }
+                } while(f);
+                //throw new Exception("Ненайден нормативная величина пробега");
+            } else {
+                normalMileage = result.getInt("val");                
             }
-            normalMileage = result.getInt("val");
         } catch (SQLException e) {
             throw new Exception("Сбой БД!");
         }
@@ -242,9 +281,22 @@ public class InputData {
                 + "ABS("+difference+"-difference) ASC LIMIT 1;";
         try(ResultSet result = statement.executeQuery(query)) {
             if(!result.next()) {
-                throw new Exception("Ненайден коэффициент корректировки по величине пробега");
+                boolean f = false;
+                do {
+                    String r = GuiController.query(
+                        "Ненайден коэффициент корректировки по величине пробега!"
+                        + "\nВведите вручную: Разность: "+direction*difference
+                    );
+                    try {
+                        factor = Float.valueOf(r);
+                    } catch(NumberFormatException e) {
+                        f = true;
+                    }
+                } while(f);
+                //throw new Exception("Ненайден коэффициент корректировки по величине пробега");
+            } else {
+                factor = result.getFloat("val");
             }
-            factor = result.getFloat("val");
         } catch (SQLException e) {
             throw new Exception("Сбой БД!");
         }
@@ -292,8 +344,7 @@ public class InputData {
         String query = "SELECT year, val FROM price_factors WHERE mass ="
                 + " (SELECT mass FROM price_factors WHERE mass >= "+mass
                 + " ORDER BY mass ASC LIMIT 1);";
-        float factor = 0, S = 0;
-        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+        float S = 0;
         int m2y = 0;
         HashMap<Integer, Float> factors = new HashMap<Integer, Float>();
         try(ResultSet result = statement.executeQuery(query)) {
@@ -311,11 +362,25 @@ public class InputData {
                 throw new Exception("Сбой БД");
         }
         System.out.println("factor");
-        factor = factors.get(currentYear - year);
         for(Pair<CarComponent, Integer> p : newComponents) {
             m2y = (p.second % 12) + 1;
-            System.out.println("m2y"+m2y);
-            S += p.first.getPrice()*(factors.get(m2y))/100;
+            System.out.println("m2y: "+m2y);
+            Float factor = factors.get(m2y);
+            if(factor == null) {
+                boolean f = false;
+                do {
+                    String r = GuiController.query(
+                        "Ненайден коэффициент корректировки для стоимости компоненты: "
+                        + p.first.getName()+"!\n Срок эксплуатации: "+m2y+" Ввести вручную:"
+                    );
+                    try {
+                        factor = Float.valueOf(r);
+                    } catch(NumberFormatException e) {
+                        f = true;
+                    }
+                } while(f);
+            }
+            S += p.first.getPrice()*(factor)/100;
         }
         /*for(CarComponent c : newComponents) {
             S += c.getPrice()*factor/100;
@@ -347,13 +412,26 @@ public class InputData {
     
     //Стоимость востановительного ремонта (Ср)
     private float getRepairCost() throws Exception {
-        float S = 0, factor;
+        float S = 0, factor = 0;
         String query = "SELECT * FROM repair_cost WHERE model_id="+model.getId()+";";
         try(ResultSet result = statement.executeQuery(query)) {
             if(!result.next()) {
-                throw new Exception("Ненайдена средняя стоимость нормо-часа ремонта");
+                boolean f = false;
+                do {
+                    String r = GuiController.query(
+                        "Ненайдена средняя стоимость нормо-часа ремонта!"
+                        + "\nВведите вручную: Модель: "+model.getName()
+                    );
+                    try {
+                        factor = Float.valueOf(r);
+                    } catch(NumberFormatException e) {
+                        f = true;
+                    }
+                } while(f);
+                //throw new Exception("Ненайдена средняя стоимость нормо-часа ремонта");
+            } else {
+                factor = result.getFloat("val");
             }
-            factor = result.getFloat("val");
         } catch (SQLException e) {
             throw new Exception("Сбой БД!");
         }
@@ -385,14 +463,28 @@ public class InputData {
         A = repairPriceWithWearFactor / averagePrice;
         B = repairCost/(materialsCost + componentsCost);
         int month = (Calendar.getInstance().get(Calendar.YEAR) - year)*12;
-        String query = "SELECT val FROM X WHERE A>="+A+" AND B<="+B+
-                " AND month>="+month+" ORDER BY A ASC, B DESC, month ASC LIMIT 1;";
+        String query = "SELECT val FROM X WHERE A<="+A+" AND B<="+B+
+                " AND month>="+month+" ORDER BY A DESC, B DESC, month ASC LIMIT 1;";
         System.out.println(A + " " + B + " " + month);
-        try(ResultSet result = statement.executeQuery(query)) {
-            if(!result.next()) {
-                throw new Exception("Не найден коэффициент утраты товарной стоимости!");
+        try (ResultSet result = statement.executeQuery(query)) {
+            if (!result.next()) {
+                boolean f = false;
+                do {
+                    String r = GuiController.query(
+                            "Ненайден коэффициент утраты товарной стоимости!"
+                            + "\nВведите вручную: A: "+A+" B: "+B
+                            +" Срок эксплуатации в месяцах: "+month
+                    );
+                    try {
+                        x = Float.valueOf(r);
+                    } catch (NumberFormatException e) {
+                        f = true;
+                    }
+                } while (f);
+                //throw new Exception("Не найден коэффициент утраты товарной стоимости!");
+            } else {
+                x = result.getFloat("val");
             }
-            x = result.getFloat("val");
         } catch (SQLException e) {
             throw new Exception("Сбой БД!");
         }
@@ -401,14 +493,27 @@ public class InputData {
     
     //Коэффициент рынка региона
     private Float getRegionFactor() throws Exception {
-        float factor;
+        float factor = 0;
         String query = "SELECT r.* FROM models m JOIN region_factors r "
                 + "ON m.region_factor=r.id WHERE m.id="+model.getId()+";";
         try(ResultSet result = statement.executeQuery(query)) {
             if(!result.next()) {
-                throw new Exception("Не найден соответствующий фактор региона!");
+                boolean f = false;
+                do {
+                    String r = GuiController.query(
+                            "Не найден соответствующий фактор региона!"
+                            + "\nВведите вручную: Модель: "+model.getName()
+                    );
+                    try {
+                        factor = Float.valueOf(r);
+                    } catch (NumberFormatException e) {
+                        f = true;
+                    }
+                } while (f);
+                //throw new Exception("Не найден соответствующий фактор региона!");
+            } else {
+                factor = result.getFloat(regionName[region]);
             }
-            factor = result.getFloat(regionName[region]);
         } catch (SQLException e) {
             throw new Exception("Сбой БД!");
         }

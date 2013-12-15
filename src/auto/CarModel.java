@@ -8,26 +8,15 @@ package auto;
  *
  * @author gorz
  */
-public class CarModel {
+public class CarModel extends CarBrand{
     
-    private int id;
-    private String name;
     private CarBrand brand;
     private int category;
     
     public CarModel(int id, String name, CarBrand brand, int category) {
-        this.id = id;
-        this.name = name;
+        super(id, name);
         this.brand = brand;
         this.category = category;
-    }
-    
-    public int getId() {
-        return id;
-    }
-    
-    public String getName() {
-        return name;
     }
     
     public int getCategory() {

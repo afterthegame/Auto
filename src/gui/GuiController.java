@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 
 public class GuiController {
@@ -29,7 +30,8 @@ public class GuiController {
 
         @Override
         public void keyPressed(KeyEvent e) {
-            ((JButton)e.getSource()).doClick();
+            if(e.getKeyCode() == 10)
+                ((JButton)e.getSource()).doClick();
         }
 
         @Override
@@ -73,5 +75,9 @@ public class GuiController {
         if(currentFrame != null) {
             currentFrame.setVisible(true);
         }
+    }
+    
+    public static String query(String query) {
+        return JOptionPane.showInputDialog(null, query);
     }
 }

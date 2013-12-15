@@ -5,28 +5,35 @@
 package auto;
 
 import gui.*;
+import java.io.File;
+import java.io.FileNotFoundException;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Connection;
 import java.sql.Statement;
+import java.util.Scanner;
 
 /**
  *
  * @author gorz
  */
 public class Auto {
-
-    private static GuiController guiController;
-    private static UserController userController;
-    private static InputDataController inputDataController = null;
-    
-    private static Connection connection;
-    private static Statement statement;
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        
+        GuiController guiController;
+        UserController userController;
+        InputDataController inputDataController = null;
+    
+        Connection connection;
+        Statement statement = null;
+        
+        String dbName = null;
+        String login = null;
+        String password = null;
         
         try {
             Class.forName("com.mysql.jdbc.Driver");
@@ -36,10 +43,23 @@ public class Auto {
         }
         
         try {
-            connection = DriverManager.getConnection("jdbc:mysql://localhost/auto", "root", "root");
+            Scanner scanner = new Scanner(new File("config.txt"));
+            dbName = scanner.nextLine();
+            login = scanner.nextLine();
+            password = scanner.nextLine();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            System.exit(-1);
+        }
+        
+        try {
+            connection = DriverManager.getConnection(
+                    "jdbc:mysql://localhost/"+dbName, 
+                    login, 
+                    password);
             statement = connection.createStatement();
         } catch (SQLException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();  
             System.exit(-1);
         }
         
