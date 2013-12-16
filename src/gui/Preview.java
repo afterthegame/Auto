@@ -216,13 +216,13 @@ public class Preview extends javax.swing.JFrame {
 
     private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
         InputData in = inputDataController.getData();
-        driver.setText(in.getDriver());
-        number.setText(in.getNumber());
-        auto.setText(in.getBrand() + " " + in.getModel());
+        driver.setText(in.getFIO());
+        number.setText(in.getIdNumber());
+        auto.setText(in.getBrand().getName() + " " + in.getModel().getName());
         year.setText(in.getYear()+"");
         mileage.setText(in.getMileage()+" тыс. км.");
         mass.setText(in.getMass()+" тонн");
-        volume.setText(in.getVolume()+" л. куб.");
+        volume.setText(in.getEngineVolume()+" л. куб.");
         try {
             price.setText(in.getCost()+" грн.");
             liquid.setText(in.getLiquidityPrice()+" грн.");
