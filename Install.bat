@@ -6,5 +6,5 @@
 	goto RUN
 )
 :RUN
-start %JAVA%java -Dfile.encoding=UTF-8 -cp .\mysql-connector.jar;.\build\classes\ installer.Installer
+start %JAVA%java -Dfile.encoding=UTF-8 -cp .\mysql-connector.jar;.\poi-3.9-20121203.jar;.\build\classes\ installer.Installer
 exit

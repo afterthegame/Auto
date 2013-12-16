@@ -6,5 +6,5 @@
 	goto RUN
 )
 :RUN
-start %JAVA%javaw -cp .\mysql-connector.jar;.\build\classes\ auto.Auto
+start %JAVA%javaw -cp .\mysql-connector.jar;.\poi-3.9-20121203.jar;.\build\classes\ auto.Auto
 exit
