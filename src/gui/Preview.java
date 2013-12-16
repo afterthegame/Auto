@@ -8,7 +8,10 @@ package gui;
 
 import auto.InputData;
 import auto.InputDataController;
+import java.io.File;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import report.Report;
 
 /**
  *
@@ -211,7 +214,21 @@ public class Preview extends javax.swing.JFrame {
     }//GEN-LAST:event_backActionPerformed
 
     private void saveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveActionPerformed
-        
+        Report report = new Report(inputDataController.getData());
+        JFileChooser fileChooser = new JFileChooser(".");
+        fileChooser.setDialogTitle("Выберите файл для сохранения отчета с входными данными");
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        fileChooser.setSelectedFile(new File("in.txt"));
+        if(fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+            report.inReport(fileChooser.getSelectedFile().getPath());
+        }
+        fileChooser.setDialogTitle("Выберите файл для сохранения отчета с результатами");
+        fileChooser.setSelectedFile(new File("out.txt"));
+        if(fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+            report.outReport(fileChooser.getSelectedFile().getPath());
+        }
+        JOptionPane.showMessageDialog(this, "Отчеты успешно сохранены!");
+        controller.changeFrame("menu");
     }//GEN-LAST:event_saveActionPerformed
 
     private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
@@ -224,16 +241,20 @@ public class Preview extends javax.swing.JFrame {
         mass.setText(in.getMass()+" тонн");
         volume.setText(in.getEngineVolume()+" л. куб.");
         try {
-            price.setText(in.getCost()+" грн.");
-            liquid.setText(in.getLiquidityPrice()+" грн.");
-            damage.setText(in.getDamage()+" грн.");           
+            in.calculateCost();
+            in.calculateLiquidityPrice();
+            in.calculateDamage();
         } catch(Exception e) {
             JOptionPane.showMessageDialog(
                     this, 
                     "Ошибка: "+e.getMessage()
             );
             controller.changeFrame("repair");
+            return;
         }
+        price.setText(in.getCost()+" грн.");
+        liquid.setText(in.getLiquidityPrice()+" грн.");
+        damage.setText(in.getDamage()+" грн.");
     }//GEN-LAST:event_formComponentShown
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

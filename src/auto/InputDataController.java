@@ -8,8 +8,8 @@ import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
+import parcer.Parcer;
 
 /**
  *
@@ -30,13 +30,6 @@ public class InputDataController {
     private ArrayList<CarComponent> materials;
     private ArrayList<UsageConditionFactor> usageConditions;
     private ArrayList<UsageConditionFactor> damages;
-    
-    //public int year = 0;
-    //public float mass = 0;
-    //public CarModel modelId = null;
-    //public void setModel(int b, int m) {
-    //    modelId = models.get(brands.get(b)).get(m);
-    //}
     
     public InputDataController(Statement statement, UserController user) throws SQLException {
         this.user = user;
@@ -319,7 +312,7 @@ public class InputDataController {
         inputData.liquidity_factor = liquidity;
     }
     
-    public float getCost() throws Exception {
+    /*public float getCost() throws Exception {
         return inputData.getCost();
     }
     
@@ -329,8 +322,11 @@ public class InputDataController {
     
     public float getDamage() {
         return inputData.getDamage();
+    }*/
+    
+    public void updateTables(String path) {
+        Parcer parser = new Parcer(path, statement);
+        parser.startParcer();
     }
-    
-    
     
 }

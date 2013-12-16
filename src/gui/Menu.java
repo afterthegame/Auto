@@ -4,7 +4,8 @@
  */
 package gui;
 
-import auto.UserController;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -35,6 +36,7 @@ public class Menu extends javax.swing.JFrame {
         inputData = new javax.swing.JButton();
         showUsers = new javax.swing.JButton();
         logout = new javax.swing.JButton();
+        update = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -66,6 +68,13 @@ public class Menu extends javax.swing.JFrame {
             }
         });
 
+        update.setText("Обновить справочники");
+        update.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                updateActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -76,11 +85,15 @@ public class Menu extends javax.swing.JFrame {
                 .addGap(36, 36, 36))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(inputData, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(showUsers, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(logout, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(inputData, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(showUsers, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(update, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(logout, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -92,8 +105,10 @@ public class Menu extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(showUsers)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(update)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(logout)
-                .addContainerGap(164, Short.MAX_VALUE))
+                .addContainerGap(135, Short.MAX_VALUE))
         );
 
         pack();
@@ -106,7 +121,7 @@ public class Menu extends javax.swing.JFrame {
 
     private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
         showUsers.setEnabled(controller.isCurrentUserAdmin());
-        //this.pack();
+        update.setEnabled(controller.isCurrentUserAdmin());
         this.setLocationRelativeTo(null);
     }//GEN-LAST:event_formComponentShown
 
@@ -119,10 +134,28 @@ public class Menu extends javax.swing.JFrame {
         controller.logout();
     }//GEN-LAST:event_logoutActionPerformed
 
+    private void updateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateActionPerformed
+        JFileChooser dirChooser = new JFileChooser(".");
+        dirChooser.setDialogTitle("Выберите папку с .xls файлами!");
+        dirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        dirChooser.setAcceptAllFileFilterUsed(false);
+        if(dirChooser.showOpenDialog(this) != JFileChooser.APPROVE_OPTION) {
+            return;
+        }
+        try {
+            controller.updateTables(dirChooser.getSelectedFile().getPath());
+        } catch(Exception e) {
+            JOptionPane.showMessageDialog(this, "Ошибка: "+e.getMessage());
+            return;
+        }
+        JOptionPane.showMessageDialog(this, "Справочники успешно обновлены!");
+    }//GEN-LAST:event_updateActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton inputData;
     private javax.swing.JButton logout;
     private javax.swing.JButton showUsers;
     private javax.swing.JLabel title;
+    private javax.swing.JButton update;
     // End of variables declaration//GEN-END:variables
 }

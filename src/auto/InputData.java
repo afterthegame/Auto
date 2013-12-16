@@ -18,13 +18,17 @@ public class InputData {
     private String regionName[] = {"low", "high", "another"};
     
     private Statement statement;
-    private float cost;
-    private float averagePrice;
-    private float repairCost;
-    private float materialsCost;
-    private float componentsCost;
-    private float repairPriceWithWearFactor;
-    private float lossOfCommercialCost;
+    private float cost; //С
+    private float liquidityPrice; //Сл
+    private float damage; //У
+    private float averagePrice; //Сср
+    private float repairCost; //Ср
+    private float materialsCost; //См
+    private float componentsCost; //Сс
+    private float repairPriceWithWearFactor; //Сврз
+    private float lossOfCommercialCost; //ВТВ
+    private float additionalPrice;  //Сдод
+    private float Sv1, Sv2; //Св1, Св2
     
     String FIO, dateOfBirth, idNumber;
     String expert;
@@ -56,72 +60,89 @@ public class InputData {
         statement = st;
     }
     
-    /*public String getDriver() {
-        return FIO;
+    public float getCost() {
+        return cost;
     }
     
-    public String getNumber() {
-        return idNumber;
+    public float getLiquidityPrice() {
+        return liquidityPrice;
     }
     
-    public String getBrand() {
-        return brand.getName();
+    public float getDamage() {
+        return damage;
     }
     
-    public String getModel() {
-        return model.getName();
+    public float getAveragePrice() {
+        return averagePrice;
     }
     
-    public int getYear() {
-        return year;
+    public float getRepairCost() {
+        return repairCost;
     }
     
-    public float getMileage() {
-        return mileage;
+    public float getMaterialsCost() {
+        return materialsCost;
     }
     
-    public float getMass() {
-        return mass;
+    public float getComponentCost() {
+        return componentsCost;
     }
     
-    public float getVolume() {
-        return engineVolume;
-    }*/
+    public float getRepairPriceWithWearFactor() {
+        return repairPriceWithWearFactor;
+    }
     
-    public float getCost() throws Exception {
+    public float getLossOfCommercialCost() {
+        return lossOfCommercialCost;
+    }
+    
+    public float getAdditionalPrice() {
+        return additionalPrice;
+    }
+    
+    public float getSv1() {
+        return Sv1;
+    }
+    
+    public float getSv2() {
+        return Sv2;
+    }
+ 
+    
+    public void calculateCost() throws Exception {
         cost = 0;
         System.out.println("AveragePrice");
-        averagePrice = getAveragePrice();
+        averagePrice = calculateAveragePrice();
         System.out.println("Гк и Дз");
         cost = 1 + getMileageFactor()/100 + getUsageConditionsFactor()/100;
         cost *= averagePrice;
         System.out.println("Сдод");
-        cost += getAdditionalPrice();
+        additionalPrice = calculateAdditionalPrice();
+        cost += additionalPrice;
         System.out.println("exit");
-        return cost;
     }
     
-    public float getLiquidityPrice() throws Exception {
+    public void calculateLiquidityPrice() throws Exception {
         if(liquidity_factor < 0.8 || liquidity_factor > 0.95) {
             throw new Exception("Неверный коэффициент ликвидности!");
         }
-        return cost*liquidity_factor;
+        liquidityPrice = cost*liquidity_factor;
     }
     
-    public float getDamage() {
+    public void calculateDamage() {
         if(!renewable) {
-            return cost;
-        } 
-        if(repairPriceWithWearFactor >= cost) {
-            return cost;
+            damage = cost;
+        } else if(repairPriceWithWearFactor >= cost) {
+            damage = cost;
         } else if(repairPriceWithWearFactor + lossOfCommercialCost >= cost) {
-            return cost;
+            damage = cost;
+        } else {
+            damage = repairPriceWithWearFactor + lossOfCommercialCost;
         }
-        return repairPriceWithWearFactor + lossOfCommercialCost;
     }
     
     //Средняя рыночная цена (Сср)
-    private float getAveragePrice() throws Exception {
+    private float calculateAveragePrice() throws Exception {
         boolean fullOverlap = true;
         float editionPrice = 0;
         float yearFactor = 0; 
@@ -324,16 +345,18 @@ public class InputData {
     }
     
     //дополнительное увел. (уменьшение) рыночной стоимости (Сдод)
-    private float getAdditionalPrice() throws Exception {
+    private float calculateAdditionalPrice() throws Exception {
         float additionalPrice = 0;
         System.out.println("IncreasePrice");
-        additionalPrice = getIncreasePrice();
+        Sv1 = getIncreasePrice();
+        additionalPrice = Sv1;
         System.out.println("EqPrice");
-        additionalPrice += getEquipmentPrice();
+        Sv2 = getEquipmentPrice();
+        additionalPrice += Sv2;
         System.out.println("RepairWithWear");
-        repairPriceWithWearFactor = getRepairPriceWithWearFactor();
+        repairPriceWithWearFactor = calculateRepairPriceWithWearFactor();
         System.out.println("getLoss");
-        lossOfCommercialCost = getLossOfCommercialCost();
+        lossOfCommercialCost = calculateLossOfCommercialCost();
         additionalPrice -= repairPriceWithWearFactor + lossOfCommercialCost;
         System.out.println("Сдодexit");
         return additionalPrice;
@@ -400,19 +423,19 @@ public class InputData {
     }
     
     //Стоимость востановительного ремонта с учетом физического износа (Сврз)
-    private float getRepairPriceWithWearFactor() throws Exception {
+    private float calculateRepairPriceWithWearFactor() throws Exception {
         System.out.println("repairCost");
-        repairCost = getRepairCost();
+        repairCost = calculateRepairCost();
         System.out.println("MaterialCost");
-        materialsCost = getMaterialsCost();
+        materialsCost = calculateMaterialsCost();
         System.out.println("ComponetnCost");
-        componentsCost = getComponentsCost();
+        componentsCost = calculateComponentsCost();
         System.out.println("WearExit");
         return repairCost+materialsCost+componentsCost*(1-0);
     }
     
     //Стоимость востановительного ремонта (Ср)
-    private float getRepairCost() throws Exception {
+    private float calculateRepairCost() throws Exception {
         float S = 0, factor = 0;
         String query = "SELECT * FROM repair_cost WHERE model_id="+model.getId()+";";
         try(ResultSet result = statement.executeQuery(query)) {
@@ -441,7 +464,7 @@ public class InputData {
     }
     
     //Стоимость необходимых для ремонта материалов (См)
-    private float getMaterialsCost() {
+    private float calculateMaterialsCost() {
         float S=0;
         for(Pair p : materials) {
             S += (float)p.second*((CarComponent)p.first).getPrice();
@@ -450,7 +473,7 @@ public class InputData {
     }
     
     //Стоимость комплектующих, которые необходимо заменить при ремонте (Сс)
-    private float getComponentsCost() {
+    private float calculateComponentsCost() {
         float S=0;
         for(Pair p : repairComponents) {
             S += (int)p.second*((CarComponent)p.first).getPrice();
@@ -459,7 +482,7 @@ public class InputData {
     }
     
    // (ВТВ)
-    private float getLossOfCommercialCost() throws Exception {
+    private float calculateLossOfCommercialCost() throws Exception {
         float x = 0, A, B;
         A = repairPriceWithWearFactor / averagePrice;
         B = repairCost/(materialsCost + componentsCost);
@@ -531,6 +554,10 @@ public class InputData {
 
     public String getIdNumber() {
         return idNumber;
+    }
+    
+    public String getExpert() {
+        return expert;
     }
 
     public CarBrand getBrand() {

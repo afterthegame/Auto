@@ -4,6 +4,7 @@
  */
 package gui;
 
+import auto.InputDataController;
 import auto.UserController;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -17,6 +18,7 @@ import javax.swing.JOptionPane;
 public class GuiController {
     
     private UserController userController = null;
+    private InputDataController inputController = null;
     private JFrame currentFrame = null;
     private HashMap<String, JFrame> map;
     private ArrayList<Clearable> clearables;
@@ -40,8 +42,9 @@ public class GuiController {
         }
     };
     
-    public GuiController(UserController userController) {
+    public GuiController(UserController userController, InputDataController input) {
         this.userController = userController;
+        this.inputController = input;
         map = new HashMap<String, JFrame>();
         clearables = new ArrayList<Clearable>();
     }
@@ -77,7 +80,13 @@ public class GuiController {
         }
     }
     
+    public void updateTables(String path) {
+        inputController.updateTables(path);
+    }
+    
     public static String query(String query) {
         return JOptionPane.showInputDialog(null, query);
     }
+    
+    
 }

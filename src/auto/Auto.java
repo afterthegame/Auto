@@ -64,12 +64,13 @@ public class Auto {
         }
         
         userController = new UserController(statement);
-        guiController = new GuiController(userController);
         try {
             inputDataController = new InputDataController(statement, userController);
         } catch(SQLException e) {
             System.exit(-1);
         }
+        guiController = new GuiController(userController, inputDataController);
+
         guiController.addFrame("auth", new Auth(guiController, userController));
         guiController.addFrame("menu", new Menu(guiController));
         guiController.addFrame("driverInfo", new DriverInfo(guiController, inputDataController));
