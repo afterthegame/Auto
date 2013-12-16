@@ -371,4 +371,89 @@ public class InputData {
         }
         return factor;
     }
+
+    public String getFIO() {
+        return FIO;
+    }
+
+    public String getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public String getIdNumber() {
+        return idNumber;
+    }
+
+    public CarBrand getBrand() {
+        return brand;
+    }
+
+    public CarModel getModel() {
+        return model;
+    }
+
+    public CarBody getBody() {
+        return body;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public float getEngineVolume() {
+        return engineVolume;
+    }
+
+    public float getMass() {
+        return mass;
+    }
+
+    public float getMileage() {
+        return mileage;
+    }
+
+    public int getRegion() {
+        return region;
+    }
+
+    public float getTax() {
+        return tax;
+    }
+
+    public float getLiquidity_factor() {
+        return liquidity_factor;
+    }
+
+    public boolean isRenewable() {
+        return renewable;
+    }
+
+    public ArrayList<UsageConditionFactor> getUsageConditions() {
+        return usageConditions;
+    }
+
+    public ArrayList<UsageConditionFactor> getBodyDamages() {
+        return bodyDamages;
+    }
+
+    public ArrayList<Pair<CarComponent, Integer>> getNewComponents() {
+        return newComponents;
+    }
+
+    public ArrayList<Pair<CarComponent, Integer>> getNewEquipments() {
+        return newEquipments;
+    }
+
+    public float getRepairComplexity() {
+        return repairComplexity;
+    }
+
+    public ArrayList<Pair<CarComponent, Float>> getMaterials() {
+        return materials;
+    }
+
+    public ArrayList<Pair<CarComponent, Integer>> getRepairComponents() {
+        return repairComponents;
+    }
+    
 }

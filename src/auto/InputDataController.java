@@ -116,7 +116,7 @@ public class InputDataController {
     }
     
     public ArrayList<String> getMaterials() {
-        ArrayList<String> names = new ArrayList<String>();
+        ArrayList<String> names = new ArrayList<>();
         for(CarComponent m : materials) {
             names.add(m.getName());
         }
@@ -124,7 +124,7 @@ public class InputDataController {
     }
     
     public ArrayList<String> getBodies() {
-        ArrayList<String> names = new ArrayList<String>();
+        ArrayList<String> names = new ArrayList<>();
         for(CarBody b : bodies) {
             names.add(b.getName());
         }

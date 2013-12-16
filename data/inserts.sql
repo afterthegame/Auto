@@ -6,17 +6,17 @@ INSERT INTO models (name, brand_id, wear_factor, year_factor, region_factor) VAL
 INSERT INTO models (name, brand_id, wear_factor, year_factor, region_factor) VALUES ("Focus", 2, 3, 3, 1);
 INSERT INTO models (name, brand_id, wear_factor, year_factor, region_factor) VALUES ("Transit", 2, 4, 4, 1);
 
+INSERT INTO bodies(name) VALUES ("Седан");
+INSERT INTO bodies(name) VALUES ("Хетчбек");
+INSERT INTO bodies(name) VALUES ("Универсал");
+INSERT INTO bodies(name) VALUES ("Мнивэн");
+
 INSERT INTO editions (year, volume, price, model_id, body_id) VALUES (2010, 2.66, 2000.00, 1, 1);
 INSERT INTO editions (year, volume, price, model_id, body_id) VALUES (2011, 3.2, 10000.00, 1, 2);
 INSERT INTO editions (year, volume, price, model_id, body_id) VALUES (2012, 2.66, 3000.00, 2, 1);
 INSERT INTO editions (year, volume, price, model_id, body_id) VALUES (2012, 3.6, 8000.00, 3, 2);
 INSERT INTO editions (year, volume, price, model_id, body_id) VALUES (2011, 2.66, 9000.00, 3, 1);
 INSERT INTO editions (year, volume, price, model_id, body_id) VALUES (2010, 3.66, 15000.00, 4, 4);
-
-INSERT INTO bodies(name) VALUES ("Седан");
-INSERT INTO bodies(name) VALUES ("Хетчбек");
-INSERT INTO bodies(name) VALUES ("Универсал");
-INSERT INTO bodies(name) VALUES ("Мнивэн");
 
 INSERT INTO wear_factors(val) VALUES (0.95);
 INSERT INTO wear_factors(val) VALUES (0.9);
