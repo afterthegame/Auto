@@ -66,7 +66,7 @@ public class Auto {
         userController = new UserController(statement);
         guiController = new GuiController(userController);
         try {
-            inputDataController = new InputDataController(statement);
+            inputDataController = new InputDataController(statement, userController);
         } catch(SQLException e) {
             System.exit(-1);
         }

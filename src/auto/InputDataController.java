@@ -18,6 +18,7 @@ import java.util.HashMap;
 public class InputDataController {
     
     private InputData inputData;
+    private UserController user;
     
     private Statement statement;
     private ArrayList<CarBrand> brands;
@@ -37,7 +38,8 @@ public class InputDataController {
     //    modelId = models.get(brands.get(b)).get(m);
     //}
     
-    public InputDataController(Statement statement) throws SQLException {
+    public InputDataController(Statement statement, UserController user) throws SQLException {
+        this.user = user;
         this.statement = statement;
         brands = new ArrayList<CarBrand>();
         bodies = new ArrayList<CarBody>();
@@ -228,6 +230,7 @@ public class InputDataController {
     
     public void newData() {
         inputData = new InputData(statement);
+        inputData.expert = user.getCurrentUser().getFio();
     }
     
     public InputData getData() {

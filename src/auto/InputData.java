@@ -27,6 +27,7 @@ public class InputData {
     private float lossOfCommercialCost;
     
     String FIO, dateOfBirth, idNumber;
+    String expert;
     
     CarBrand brand;
     CarModel model;

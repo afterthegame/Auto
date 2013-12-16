@@ -118,4 +118,7 @@ public class UserController {
         return currentUser.isAdmin();
     }
     
+    public User getCurrentUser() {
+        return currentUser;
+    }
 }
