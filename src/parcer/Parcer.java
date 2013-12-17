@@ -143,16 +143,18 @@ public class Parcer {
                         case 0:
                             _categoryName = cell.getStringCellValue();
                             break;
-//                        price
+//                        flag
                         case 1:
-                            if (cell.getCellType() == Cell.CELL_TYPE_BOOLEAN) {
-                                _flag = cell.getBooleanCellValue();
+                            LOG.info(cell.getCellType()+">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+                            if (cell.getCellType() == Cell.CELL_TYPE_STRING) {
+                                String s = cell.getStringCellValue();
+                                _flag = Boolean.valueOf(s);
                             }
                             break;
                     }
-                    CarCategory _Category = new CarCategory(categoriesList.size() + 1, _categoryName, _flag);
-                    categoriesList.add(_Category);
                 }
+                CarCategory _Category = new CarCategory(categoriesList.size() + 1, _categoryName, _flag);
+                categoriesList.add(_Category);
             }
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Parcer.class.getName()).log(Level.SEVERE, null, ex);
@@ -247,11 +249,11 @@ public class Parcer {
                     if (_Model == null) {
                         throw new NullPointerException("Не найдена модель");
                     }
-                    ArrayList<CarComponent> _currentComponentsList;
-                    _currentComponentsList = componentsHashMap.get(_Model);
-                    CarComponent _Component = new CarComponent(++_idComponent, _componentName, _price, _Model);
-                    _currentComponentsList.add(_Component);
                 }
+                ArrayList<CarComponent> _currentComponentsList;
+                _currentComponentsList = componentsHashMap.get(_Model);
+                CarComponent _Component = new CarComponent(++_idComponent, _componentName, _price, _Model);
+                _currentComponentsList.add(_Component);
             }
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Parcer.class.getName()).log(Level.SEVERE, null, ex);
@@ -309,7 +311,7 @@ public class Parcer {
                             LOG.info(_modelName);
                             break;
                         case 2:
-                            _componentName = cell.getStringCellValue();
+                            _equipmentName = cell.getStringCellValue();
                             LOG.info(_componentName);
                             break;
                         case 3:
@@ -347,11 +349,12 @@ public class Parcer {
                     if (_Model == null) {
                         throw new NullPointerException("Не найдена модель");
                     }
-                    ArrayList<CarComponent> _currentEquipmentsList;
-                    _currentEquipmentsList = equipmentsHashMap.get(_Model);
-                    CarComponent _Equipment = new CarComponent(++_idEquipment, _equipmentName, _price, _Model);
-                    _currentEquipmentsList.add(_Equipment);
                 }
+                ArrayList<CarComponent> _currentEquipmentsList;
+                _currentEquipmentsList = equipmentsHashMap.get(_Model);
+                CarComponent _Equipment = new CarComponent(++_idEquipment, _equipmentName, _price, _Model);
+                _currentEquipmentsList.add(_Equipment);
+                
             }
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Parcer.class.getName()).log(Level.SEVERE, null, ex);
@@ -421,8 +424,8 @@ public class Parcer {
                     }
 
                 }
-                LOG.info("brand: " + _brandName);
-                LOG.info("model: " + _modelName);
+                LOG.log(Level.INFO, "brand: {0}", _brandName);
+                LOG.log(Level.INFO, "model: {0}", _modelName);
                 if (_brandName != null) {
                     for (CarBrand brand : brandsList) {
                         if (brand.getName().equals(_brandName)) {
@@ -445,11 +448,11 @@ public class Parcer {
                     if (_Model == null) {
                         throw new NullPointerException("Не найдена модель");
                     }
-                    ArrayList<CarFactor> _currentYearFactorsList;
+                }
+                ArrayList<CarFactor> _currentYearFactorsList;
                     _currentYearFactorsList = yearFactorsHashMap.get(_Model);
                     CarFactor _Factor = new CarFactor(_Model.getId(), _year, _factor);
                     _currentYearFactorsList.add(_Factor);
-                }
             }
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Parcer.class.getName()).log(Level.SEVERE, null, ex);
@@ -621,7 +624,7 @@ public class Parcer {
                     }
                 }
                 if (_Body == null) {
-                    _Body = new CarBody(brandsList.size() + 1, _brandName);
+                    _Body = new CarBody(bodiesList.size() + 1, _bodyName);
                     bodiesList.add(_Body);
                 }
 
@@ -648,7 +651,8 @@ public class Parcer {
                     }
                 }
                 if (_Model == null) {
-                    _Model = new CarModel(++_idModel, _modelName, _Brand, _Category.getId(), _repairCost, _wearFactor,
+                    _Model = new CarModel(++_idModel, _modelName, _Brand,
+                            _Category.getId(), _repairCost, _wearFactor,
                             _region1, _region2, _region3);
                     _currentModelsList.add(_Model);
                     editionsHashMap.put(_Model, new ArrayList<CarEdition>());
@@ -659,7 +663,8 @@ public class Parcer {
 // --------------------------------инициализируем выпуск---------------------------------
                 ArrayList<CarEdition> _currentEditionsList;
                 _currentEditionsList = editionsHashMap.get(_Model);
-                CarEdition _Edition = new CarEdition(++_idEdition, _Model, _Brand, _year, _volume, _price);
+                CarEdition _Edition = new CarEdition(++_idEdition, _Model,
+                        _Brand, _year, _volume, _price);
                 _currentEditionsList.add(_Edition);
 //------------------------------------------------------------------------------
             }
@@ -679,15 +684,17 @@ public class Parcer {
     public void UpdateDatabaseAfterParce() {
         try {
 // --------------------------------ТАБЛИЦА МАТЕРИАЛЫ---------------------------------           
-            statement.executeUpdate("DELETE * FROM materials;");
+            statement.executeUpdate("DELETE FROM materials;");
             for (CarComponent material : materialsList) {
                 statement.addBatch("INSERT INTO materials(name, price) VALUES ("
-                        + material.getName() + "," + material.getPrice() + ");");
+                        + "\"" + material.getName() + "\"" + ","
+                        + material.getPrice() + ");");
             }
             statement.executeBatch();
+            LOG.log(Level.INFO, "ТАБЛИЦА МАТЕРИАЛЫ");
 
 // --------------------------------ТАБЛИЦА КАТЕГОРИИ---------------------------------
-            statement.executeUpdate("DELETE * FROM categories;");
+            statement.executeUpdate("DELETE FROM categories;");
             for (CarCategory category : categoriesList) {
                 String f;
                 if (category.isFlag() == true) {
@@ -696,80 +703,108 @@ public class Parcer {
                     f = "FALSE";
                 }
                 statement.addBatch("INSERT INTO categories(id, name, flag) VALUES ("
-                        + category.getId() + "," + category.getName() + "," + f + ");");
+                        + category.getId() + ","
+                        + "\"" + category.getName() + "\"" + ","
+                        + f + ");");
             }
             statement.executeBatch();
+            LOG.log(Level.INFO, "ТАБЛИЦА КАТЕГОИИ");
 
 // --------------------------------ТАБЛИЦА КУЗОВА---------------------------------
-            statement.executeUpdate("DELETE * FROM bodies;");
+            statement.executeUpdate("DELETE FROM bodies;");
             for (CarBody body : bodiesList) {
                 statement.addBatch("INSERT INTO bodies(id, name) VALUES ("
-                        + body.getId() + "," + body.getName() + ");");
+                        + body.getId() + "," + "\""
+                        + body.getName() + "\"" + ");");
             }
             statement.executeBatch();
+            LOG.log(Level.INFO, "ТАБЛИЦА КУЗОВА");
 
 // --------------------------------ТАБЛИЦА МАРОК---------------------------------
-            statement.addBatch("DELETE * FROM brands;");
-            statement.addBatch("DELETE * FROM models;");
-            statement.addBatch("DELETE * FROM edititons;");
-            statement.addBatch("DELETE * FROM equipments;");
-            statement.addBatch("DELETE * FROM components;");
-            statement.addBatch("DELETE * FROM year_factors;");
-            statement.addBatch("DELETE * FROM wear_factors;");
-            statement.addBatch("DELETE * FROM repair_cost;");
-            statement.addBatch("DELETE * FROM region_factors;");
+            statement.addBatch("DELETE FROM brands;");
+            statement.addBatch("DELETE FROM models;");
+//            statement.addBatch("IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES "
+//                    + "WHERE table_name = 'editions') DELETE FROM editions;");
+            statement.addBatch("DELETE FROM equipments;");
+            statement.addBatch("DELETE FROM components;");
+            statement.addBatch("DELETE FROM year_factors;");
+            statement.addBatch("DELETE FROM wear_factors;");
+            statement.addBatch("DELETE FROM repair_cost;");
+            statement.addBatch("DELETE FROM region_factors;");
             statement.executeBatch();
+            LOG.log(Level.INFO, "ТАБЛИЦЫ УДАЛЕНЫ");
 
             for (CarBrand brand : brandsList) {
                 statement.addBatch("INSERT INTO brands(id, name) VALUES ("
-                        + brand.getId() + "," + brand.getName() + ");");
-
+                        + brand.getId() + "," + "\""
+                        + brand.getName() + "\""
+                        + ");");
+                LOG.log(Level.INFO, "ТАБЛИЦА МАРОК");
 //                 --------------------------------ТАБЛИЦА МOДЕЛЕЙ---------------------------------
                 ArrayList<CarModel> _currentCarModelsList = modelsHashMap.get(brand);
                 for (CarModel model : _currentCarModelsList) {
-                    statement.addBatch("INSERT INTO models(id, name, brand_id, wear_factor, year_factor, region_factor, category_id)"
+                    statement.addBatch("INSERT INTO models(id, name, brand_id, "
+                            + "wear_factor, year_factor, region_factor, category_id)"
                             + " VALUES ("
-                            +model.getId()+","+ model.getName() + "," + brand.getId() + "," + model.getId()
-                            + "," + model.getId() + "," + model.getId() + "," + model.getCategory() + ");");
+                            + model.getId() + "," + "\"" + model.getName() + "\"" + ","
+                            + brand.getId() + "," + model.getId()
+                            + "," + model.getId() + "," + model.getId()
+                            + "," + model.getCategory() + ");");
+                    LOG.log(Level.INFO, "ТАБЛИЦА МОДЕЛЕЙ");
 
 //                      --------------------------------ТАБЛИЦА ИЗНОСА---------------------------------
                     statement.addBatch("INSERT INTO wear_factors(id, val) "
-                            + " VALUES (" + model.getId() + "," + model.getWearFactor() + ");");
+                            + " VALUES (" + model.getId() + ","
+                            + model.getWearFactor() + ");");
+                    LOG.log(Level.INFO, "ТАБЛИЦА ИЗНОСА");
 
 //                      --------------------------------ТАБЛИЦА ЦЕНА РЕМОНТА---------------------------------
                     statement.addBatch("INSERT INTO repair_cost(id, val, model_id) "
-                            + " VALUES (" + model.getId() + ","+ model.getRepairCost() + "," + model.getId() + ");");
+                            + " VALUES (" + model.getId()
+                            + "," + model.getRepairCost()
+                            + "," + model.getId() + ");");
+                    LOG.log(Level.INFO, "ТАБЛИЦА ЦЕНА РЕМОНА");
 
 //                      --------------------------------ТАБЛИЦА ФАКТОР РЕГИОНА---------------------------------
                     statement.addBatch("INSERT INTO region_factors(id,low, high, another) "
-                            + " VALUES (" + model.getId() + ","+ model.getRegionFactor1() + "," + model.getRegionFactor2() + "," + model.getRegionFactor3() + ");");
+                            + " VALUES (" + model.getId() + "," + model.getRegionFactor1()
+                            + "," + model.getRegionFactor2() + ","
+                            + model.getRegionFactor3() + ");");
                     ArrayList<CarEdition> _currentCarEditionsList = editionsHashMap.get(model);
 
 //                      --------------------------------ТАБЛИЦА ВЫПУСКОВ---------------------------------
                     for (CarEdition edition : _currentCarEditionsList) {
-                        statement.addBatch("INSERT INTO editions (id, year, volume, price, model_id, body_id) VALUES ("
-                                + edition.getId() + ","+ edition.getYear() + "," + edition.getVolume() + "," + edition.getPrice()
+                        statement.addBatch("INSERT INTO editions (id, year, volume, "
+                                + "price, model_id, body_id) VALUES ("
+                                + edition.getId() + "," + edition.getYear() + ","
+                                + edition.getVolume() + "," + edition.getPrice()
                                 + "," + model.getId() + "," + brand.getId() + ");");
                     }
 
 //                      --------------------------------ТАБЛИЦА КОМПОНЕНТ---------------------------------
                     ArrayList<CarComponent> _currentCarComponentList = componentsHashMap.get(model);
                     for (CarComponent component : _currentCarComponentList) {
-                        statement.addBatch("INSERT INTO components(id, name, price, model_id) VALUES ("
-                                + component.getId() + ","+ component.getName() + "," + component.getPrice() + "," + model.getId() + ");");
+                        statement.addBatch("INSERT INTO components(id, name, price, model_id) "
+                                + "VALUES ("
+                                + component.getId() + "," + "\"" + component.getName() + "\"" + ","
+                                + component.getPrice() + "," + model.getId() + ");");
                     }
 
 //                      --------------------------------ТАБЛИЦА ОБОРУДОВАНИЯ---------------------------------
                     ArrayList<CarComponent> _currentCarEquipmentList = equipmentsHashMap.get(model);
                     for (CarComponent equipment : _currentCarEquipmentList) {
-                        statement.addBatch("INSERT INTO equipments(id, name, price, model_id) VALUES ("
-                                + equipment.getId() + ","+ equipment.getName() + "," + equipment.getPrice() + "," + equipment.getId() + ");");
+                        statement.addBatch("INSERT INTO equipments(id, name, price, model_id) "
+                                + "VALUES ("
+                                + equipment.getId() + "," + "\"" + equipment.getName() + "\""
+                                + "," + equipment.getPrice() + "," + model.getId() + ");");
                     }
 //                      --------------------------------ТАБЛИЦА ФАКТОР ГОДА---------------------------------
                     ArrayList<CarFactor> _currentCarFactorsList = yearFactorsHashMap.get(model);
                     for (CarFactor factor : _currentCarFactorsList) {
-                        statement.addBatch("INSERT INTO year_factors(id, year, val) VALUES ("
-                                + factor.getId() + "," + factor.getYear() + "," + factor.getFactor() + ");");
+                        statement.addBatch("INSERT INTO year_factors(id, year, val) "
+                                + "VALUES ("
+                                + factor.getId() + "," + factor.getYear() + ","
+                                + factor.getFactor() + ");");
                     }
                 }
                 statement.executeBatch();

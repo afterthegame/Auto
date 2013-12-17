@@ -9,6 +9,7 @@ import java.io.*;
 import auto.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -53,20 +54,30 @@ public class Report {
             DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
             Calendar cal = Calendar.getInstance();
             writer.println("По результатам проведения экспертизы транспортного средства" 
-                            + operableData.getBrand()+" "+operableData.getModel()+" "+operableData.getBody()
+                            + operableData.getBrand()+" "+operableData.getModel()+" "
+                            +operableData.getBody()
                             +" "+operableData.getYear());
             writer.println("Обьем двигателя (в куб. л) " + operableData.getEngineVolume() 
                             + " Масса (в тоннах) " + operableData.getMass() + "Пробег (в км)"
                             + operableData.getMileage());
             writer.println("Регион" + operableData.getRegion() + "Сумма налога (в грн) "
                             + operableData.getTax());
-            
-//Массив            writer.println("Условия храниния экплуатации " + operableData.getUsageConditions());
+            writer.println("Условия храниния экплуатации ");
+            ArrayList<UsageConditionFactor> _usageConditionsList = operableData.getUsageConditions();
+            for (UsageConditionFactor u: _usageConditionsList){
+                writer.println(u.getName() + " "+ u.getValue());
+            }
             
 //Массив Проверить на 0            writer.println("Дефекты кузова " + operableData.getBodyDamages()); 
-            
+             writer.println("Дефекты кузова ");
+             
          
 //Массив пара CarComponent.getName, integer            writer.println("Обновленные комплектующие " + operableData.getNewComponents());
+            writer.println("Обновленные комплектующие ");
+            ArrayList<Pair<CarComponent, Integer>> _carCarComponentsList = operableData.getNewComponents();
+            for (Pair<CarComponent, Integer> comonentPair : _carCarComponentsList){
+                writer.println(comonentPair.first.getName() + "  "+ comonentPair.second);
+            }
             
 //    тоже самое        writer.println("Обновленное оборудование " + operableData.getNewEquipments());
             
