@@ -6,44 +6,81 @@ package gui;
 
 import auto.InputDataController;
 import auto.Pair;
+import auto.User;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
+import javax.swing.Action;
 import javax.swing.BoxLayout;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.table.AbstractTableModel;
 
 /**
  *
  * @author gorz
  */
-public class Components extends javax.swing.JFrame {
+public class Components extends javax.swing.JFrame implements Clearable, Action {
 
     private GuiController controller;
     private InputDataController inputDataController;
-    private ArrayList<Pair<Integer, Integer>> selectedComponents;
-    private ArrayList<Pair<Integer, Integer>> selectedEquipments;
     private ArrayList<String> componentsNames = null;
     private ArrayList<String> equipmentsNames = null;
-    private ArrayList<EqPanel> panelsComponents = null;
-    private ArrayList<EqPanel> panelsEquipments = null;
+    private boolean needUpdate = true;
+    private EntityModel componentsModel;
+    private EntityModel equipmentsModel;
+    private HashMap<String, Object> map;
     /**
      * Creates new form Components
      */
     public Components(GuiController controller, InputDataController inputDataController) {
+        map = new HashMap<String, Object>();
         initComponents();
+        componentsModel = new EntityModel(components);
+        components.setModel(componentsModel);
+        ButtonColumn buttonColumn = new ButtonColumn(components, this, 2);
+        components.getColumnModel().getColumn(2).setMaxWidth(10);
+        equipmentsModel = new EntityModel(components);
+        equipments.setModel(equipmentsModel);
+        buttonColumn = new ButtonColumn(equipments, this, 2);
+        equipments.getColumnModel().getColumn(2).setMaxWidth(10);
         this.controller = controller;
         this.inputDataController = inputDataController;
-        selectedComponents = new ArrayList<Pair<Integer, Integer>>();
-        selectedEquipments = new ArrayList<Pair<Integer, Integer>>();
-        panelsComponents = new ArrayList<EqPanel>();
-        panelsEquipments = new ArrayList<EqPanel>();
-        components.setLayout(new BoxLayout(components, BoxLayout.Y_AXIS));
-        equipments.setLayout(new BoxLayout(equipments, BoxLayout.Y_AXIS));
+        this.setLocationRelativeTo(null);
+        back.addKeyListener(GuiController.listener);
+        next.addKeyListener(GuiController.listener);
     }
 
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        JTable table = (JTable) e.getSource();
+        int modelRow = Integer.valueOf(e.getActionCommand());
+        if(table == components) {
+            componentsModel.delete(modelRow);
+        } else {
+            equipmentsModel.delete(modelRow);
+        }
+        table.revalidate();
+        table.repaint();
+    }
+
+    @Override
+    public void putValue(String key, Object value) {
+        map.put(key, value);
+    }
+
+    @Override
+    public Object getValue(String key) {
+        return map.get(key);
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -56,14 +93,14 @@ public class Components extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         listOfComponents = new javax.swing.JComboBox();
         jScrollPane1 = new javax.swing.JScrollPane();
-        components = new javax.swing.JPanel();
+        components = new javax.swing.JTable();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         listOfEquipments = new javax.swing.JComboBox();
         addEquipment = new javax.swing.JButton();
         addComponent = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
-        equipments = new javax.swing.JPanel();
+        equipments = new javax.swing.JTable();
         back = new javax.swing.JButton();
         next = new javax.swing.JButton();
 
@@ -76,22 +113,22 @@ public class Components extends javax.swing.JFrame {
 
         jLabel1.setText("Компоненты и оборудование");
 
-        javax.swing.GroupLayout componentsLayout = new javax.swing.GroupLayout(components);
-        components.setLayout(componentsLayout);
-        componentsLayout.setHorizontalGroup(
-            componentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 383, Short.MAX_VALUE)
-        );
-        componentsLayout.setVerticalGroup(
-            componentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 179, Short.MAX_VALUE)
-        );
-
+        components.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
         jScrollPane1.setViewportView(components);
 
-        jLabel2.setText("Компоненты:");
+        jLabel2.setText("Обновленные компоненты:");
 
-        jLabel3.setText("Оборудование:");
+        jLabel3.setText("Обновленное оборудование:");
 
         addEquipment.setText("Добавить");
         addEquipment.addActionListener(new java.awt.event.ActionListener() {
@@ -107,17 +144,17 @@ public class Components extends javax.swing.JFrame {
             }
         });
 
-        javax.swing.GroupLayout equipmentsLayout = new javax.swing.GroupLayout(equipments);
-        equipments.setLayout(equipmentsLayout);
-        equipmentsLayout.setHorizontalGroup(
-            equipmentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 383, Short.MAX_VALUE)
-        );
-        equipmentsLayout.setVerticalGroup(
-            equipmentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 179, Short.MAX_VALUE)
-        );
-
+        equipments.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
         jScrollPane2.setViewportView(equipments);
 
         back.setText("Назад");
@@ -138,14 +175,10 @@ public class Components extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(95, 95, 95))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(listOfComponents, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
@@ -165,6 +198,10 @@ public class Components extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(next)))
                 .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel1)
+                .addGap(155, 155, 155))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -197,46 +234,54 @@ public class Components extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
+    @Override
+    public void clear() {
+        needUpdate = true;
         listOfComponents.removeAllItems();
-        componentsNames = inputDataController.getComponents();
-        for(String name : componentsNames) {
-            listOfComponents.addItem(name);
-        }
         listOfEquipments.removeAllItems();
-        equipmentsNames = inputDataController.getEquipments();
-        for(String name : equipmentsNames) {
-            listOfEquipments.addItem(name);
-        }
-        selectedComponents.clear();
-        selectedEquipments.clear();
-        panelsComponents.clear();
-        panelsEquipments.clear();
-        components.removeAll();
-        equipments.removeAll();
-    }//GEN-LAST:event_formComponentShown
-
+        componentsModel.clear();
+        components.revalidate();
+        components.repaint();
+        equipmentsModel.clear();
+        equipments.revalidate();
+        equipments.repaint();
+    }
+    
     private void addComponentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addComponentActionPerformed
         int index = listOfComponents.getSelectedIndex();
-        selectedComponents.add(new Pair(index, 1));
-        EqPanel panel = new EqPanel(componentsNames.get(index));
-        panel.setAlignmentX(LEFT_ALIGNMENT);
-        panelsComponents.add(panel);
-        components.add(panel);
+        componentsModel.add(index, componentsNames.get(index));
         components.revalidate();
     }//GEN-LAST:event_addComponentActionPerformed
 
     private void nextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextActionPerformed
-        for(int i = 0; i<selectedEquipments.size(); i++) {
-            selectedEquipments.get(i).second = panelsEquipments.get(i).getCount();
+        ArrayList<Pair<Integer, Integer>> selectedEquipments = new ArrayList<Pair<Integer, Integer>>();
+        ArrayList<Entity> entities = equipmentsModel.get();
+        try {
+            for(Entity e : entities) {
+                Pair<Integer, Integer> pair = new Pair<Integer, Integer>(e.index, Integer.valueOf(e.month));
+                if(pair.second <= 0) {
+                    throw new NumberFormatException();
+                }
+                selectedEquipments.add(pair);
+            }
+        } catch(NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Срок эксплуатации должен быть положительным числом");
+            return;
         }
-        for(int i = 0; i<selectedComponents.size(); i++) {
-            selectedComponents.get(i).second = panelsComponents.get(i).getCount();
+        ArrayList<Pair<Integer, Integer>> selectedComponents = new ArrayList<Pair<Integer, Integer>>();
+        entities = componentsModel.get();
+        try {
+            for(Entity e : entities) {
+                Pair<Integer, Integer> pair = new Pair<Integer, Integer>(e.index, Integer.valueOf(e.month));
+                if(pair.second <= 0) {
+                    throw new NumberFormatException();
+                }
+                selectedComponents.add(pair);
+            }
+        } catch(NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Срок эксплуатации должен быть положительным числом");
+            return;
         }
-        /*JOptionPane.showMessageDialog(
-                this, 
-                "СВ1 = "+inputDataController.getIncreasePrice(selectedComponents)
-                +"\nСВ2 = "+inputDataController.getEquipmentPrice(selectedEquipments));*/
         inputDataController.setComponentsAndEquipments(
                 selectedComponents, 
                 selectedEquipments);
@@ -249,38 +294,30 @@ public class Components extends javax.swing.JFrame {
 
     private void addEquipmentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addEquipmentActionPerformed
         int index = listOfEquipments.getSelectedIndex();
-        selectedEquipments.add(new Pair(index, 1));
-        EqPanel panel = new EqPanel(equipmentsNames.get(index));
-        panel.setAlignmentX(LEFT_ALIGNMENT);
-        panelsEquipments.add(panel);
-        equipments.add(panel);
+        equipmentsModel.add(index, equipmentsNames.get(index));
         equipments.revalidate();
     }//GEN-LAST:event_addEquipmentActionPerformed
 
-    class EqPanel extends JPanel {
-        JTextField count;
-        JLabel name;
-        
-        public EqPanel(String n) {
-            count = new JTextField("1", 5);
-            name = new JLabel(n);
-            setLayout(new FlowLayout(FlowLayout.LEADING));
-            add(count);
-            add(name);
-            setMaximumSize(getPreferredSize());
+    private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
+        if(needUpdate) {
+            componentsNames = inputDataController.getComponents();
+            for(String name : componentsNames) {
+                listOfComponents.addItem(name);
+            }
+            equipmentsNames = inputDataController.getEquipments();
+            for(String name : equipmentsNames) {
+                listOfEquipments.addItem(name);
+            }   
+            needUpdate = false;
         }
-        
-        public int getCount() {
-            return Integer.valueOf(count.getText());
-        }
-    }
-    
+    }//GEN-LAST:event_formComponentShown
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addComponent;
     private javax.swing.JButton addEquipment;
     private javax.swing.JButton back;
-    private javax.swing.JPanel components;
-    private javax.swing.JPanel equipments;
+    private javax.swing.JTable components;
+    private javax.swing.JTable equipments;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -290,4 +327,109 @@ public class Components extends javax.swing.JFrame {
     private javax.swing.JComboBox listOfEquipments;
     private javax.swing.JButton next;
     // End of variables declaration//GEN-END:variables
+}
+
+class Entity {
+    
+    public int index;
+    public String month;
+    public String name;
+    
+    public Entity(int index, String month, String name) {
+        this.index = index;
+        this.month = month;
+        this.name = name;
+    }
+}
+
+class EntityModel extends AbstractTableModel {
+
+    ArrayList<Entity> entities;
+    Icon icon;
+    JTable table;
+    
+    public EntityModel(JTable table) {
+        this.table = table;
+        entities = new ArrayList<Entity>();
+        icon = new ImageIcon("del.png");
+    }
+    
+    public void add(int i, String name) {
+        entities.add(new Entity(i, "1", name));
+    }
+    
+    public void delete(int i) {
+        entities.remove(i);
+    }
+    
+    public void clear() {
+        entities.clear();
+    }
+    
+    public ArrayList<Entity> get() {
+        return entities;
+    }
+    
+    @Override
+    public String getColumnName(int column) {
+       switch(column) {
+           case 0:
+               return "Срок эксплуатации (мес.)";
+           case 1:
+               return "Наименование";
+       }
+       return "";
+    }
+    
+    
+    @Override
+    public Class<?> getColumnClass(int col) {
+        switch(col) {
+            case 0:
+            case 1:
+                return String.class;
+            default:
+                return ButtonColumn.class;
+        }
+    }
+
+    @Override
+    public boolean isCellEditable(int row, int col) {
+        return !(col == 1);
+    }
+    
+    @Override
+    public int getRowCount() {
+        return entities.size();
+    }
+
+    @Override
+    public int getColumnCount() {
+        return 3;
+    }
+
+    @Override
+    public Object getValueAt(int rowIndex, int columnIndex) {
+        Entity entity = entities.get(rowIndex);
+        switch(columnIndex) {
+            case 0:
+                return entity.month;
+            case 1:
+                return entity.name;
+            default:
+                return icon;
+        }
+    }
+
+    @Override
+    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+        if(columnIndex == 0) {
+            entities.get(rowIndex).month = (String)aValue;
+            table.revalidate();
+            table.repaint();
+        } else {
+            super.setValueAt(aValue, rowIndex, columnIndex); 
+        }
+    }
+      
 }

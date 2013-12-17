@@ -5,12 +5,13 @@
 package gui;
 
 import auto.InputDataController;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author gorz
  */
-public class DriverInfo extends javax.swing.JFrame {
+public class DriverInfo extends javax.swing.JFrame implements Clearable {
 
     private GuiController controller;
     private InputDataController inputDataController;
@@ -22,6 +23,9 @@ public class DriverInfo extends javax.swing.JFrame {
         initComponents();
         this.controller = controller;
         this.inputDataController = inputDataController;
+        back.addKeyListener(GuiController.listener);
+        next.addKeyListener(GuiController.listener);
+        this.setLocationRelativeTo(null);
     }
 
     /**
@@ -44,11 +48,6 @@ public class DriverInfo extends javax.swing.JFrame {
         next = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        addComponentListener(new java.awt.event.ComponentAdapter() {
-            public void componentShown(java.awt.event.ComponentEvent evt) {
-                formComponentShown(evt);
-            }
-        });
 
         title.setText("Информация о водиетел");
 
@@ -130,20 +129,28 @@ public class DriverInfo extends javax.swing.JFrame {
     }//GEN-LAST:event_backActionPerformed
 
     private void nextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextActionPerformed
+        String fioVal = fio.getText();
+        String bornVal = born.getText();
+        String numberVal = born.getText();
+        if(fioVal.length() == 0 || bornVal.length() == 0 || numberVal.length() == 0) {
+            JOptionPane.showMessageDialog(this, "Все поля долждны быть заполненны!");
+            return;
+        }
         inputDataController.setDriverInfo(
-                fio.getText(), 
-                born.getText(),
-                number.getText());
+                fioVal, 
+                bornVal,
+                numberVal);
         controller.changeFrame("carInfo");
     }//GEN-LAST:event_nextActionPerformed
 
-    private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
+    @Override
+    public void clear() {
         inputDataController.newData();
         fio.setText("");
         born.setText("");
         number.setText("");
-    }//GEN-LAST:event_formComponentShown
-
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton back;
     private javax.swing.JTextField born;

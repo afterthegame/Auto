@@ -782,7 +782,7 @@ public class Parcer {
     }
 
     public static void main(String[] args) {
-        Parcer p = new Parcer("/home/afterthegame", null);
+        Parcer p = new Parcer("xls_data", null);
         p.startParcer();
     }
 }

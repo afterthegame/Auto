@@ -12,14 +12,29 @@ public class User {
     
     private int id;
     private String fio, login;
-    private int type;
+    private boolean admin;
+
+    public int getId() {
+        return id;
+    }
     
-    public User(int id, String fio, String login, int type) {
+    public String getFio() {
+        return fio;
+    }
+
+    public String getLogin() {
+        return login;
+    }
+    
+    public User(int id, String fio, String login, boolean admin) {
         this.id = id;
         this.fio = fio;
         this.login = login;
-        this.type = type;
-        System.out.println(fio);
+        this.admin = admin;
+    }
+    
+    public boolean isAdmin() {
+        return admin;
     }
     
 }

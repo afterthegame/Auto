@@ -12,7 +12,7 @@ import javax.swing.JOptionPane;
  *
  * @author gorz
  */
-public class CarInfo extends javax.swing.JFrame {
+public class CarInfo extends javax.swing.JFrame implements Clearable {
 
     private GuiController controller;
     private InputDataController inputDataController;
@@ -36,6 +36,9 @@ public class CarInfo extends javax.swing.JFrame {
             body.addItem(n);
         }
         body.setSelectedIndex(0);
+        back.addKeyListener(GuiController.listener);
+        next.addKeyListener(GuiController.listener);
+        this.setLocationRelativeTo(null);
     }
 
     /**
@@ -70,11 +73,6 @@ public class CarInfo extends javax.swing.JFrame {
         mileage = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        addComponentListener(new java.awt.event.ComponentAdapter() {
-            public void componentShown(java.awt.event.ComponentEvent evt) {
-                formComponentShown(evt);
-            }
-        });
 
         title.setText("Информация о машине");
 
@@ -90,7 +88,7 @@ public class CarInfo extends javax.swing.JFrame {
 
         yearLabel.setText("Год выпуска:");
 
-        volumeLabel.setText("Объем двигателя:");
+        volumeLabel.setText("Объем двигателя (л. куб.):");
 
         year.setText("2010");
 
@@ -116,72 +114,67 @@ public class CarInfo extends javax.swing.JFrame {
 
         region.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Регионы с низким инвестиционным интересом", "Регионы с выскоим инвестиционным интересом", "Другие районы" }));
 
-        massLabel.setText("Масса:");
+        massLabel.setText("Масса (в тоннах):");
 
         mass.setText("2.8");
 
-        mileageLable.setText("Пробег:");
+        mileageLable.setText("Пробег (тыс. км.):");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(region, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(region, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(regionLabel)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                        .addComponent(massLabel)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(mass))
-                                    .addComponent(body, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(18, 18, 18)
-                                .addComponent(mileageLable)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(mileage))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(taxLabel)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(tax, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(back)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(next))))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(117, 117, 117)
-                        .addComponent(title))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
+                        .addComponent(taxLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tax, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(back)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(next))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(brand, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addComponent(brandLabel, javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                                         .addComponent(yearLabel)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(year, javax.swing.GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE))
-                                    .addComponent(brand, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGap(19, 19, 19)
-                                        .addComponent(modelLabel))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGap(18, 18, 18)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                            .addGroup(layout.createSequentialGroup()
-                                                .addComponent(volumeLabel)
-                                                .addGap(4, 4, 4)
-                                                .addComponent(volume))
-                                            .addComponent(model, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                            .addComponent(bodyLabel))))
+                                        .addComponent(year, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(43, 43, 43)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(volumeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(volume))
+                            .addComponent(modelLabel)
+                            .addComponent(model, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(regionLabel)
+                            .addComponent(bodyLabel)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(massLabel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(mass, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(28, 28, 28)
+                                .addComponent(mileageLable)
+                                .addGap(8, 8, 8)
+                                .addComponent(mileage, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(body, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addGap(150, 150, 150)
+                .addComponent(title)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -231,12 +224,20 @@ public class CarInfo extends javax.swing.JFrame {
     private void backActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backActionPerformed
         controller.changeFrame("driverInfo");
     }//GEN-LAST:event_backActionPerformed
-
-    private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
+    
+    @Override
+    public void clear() {
         brand.setSelectedIndex(0);
         body.setSelectedIndex(0);
-    }//GEN-LAST:event_formComponentShown
-
+        volume.setText("");
+        year.setText("");
+        body.setSelectedIndex(0);
+        mass.setText("");
+        mileage.setText("");
+        region.setSelectedIndex(0);
+        tax.setText("0");
+    }
+    
     private void brandItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_brandItemStateChanged
         ArrayList<String> models = inputDataController.getModels(brand.getSelectedIndex());
         model.removeAllItems();
@@ -250,39 +251,65 @@ public class CarInfo extends javax.swing.JFrame {
     }//GEN-LAST:event_brandItemStateChanged
 
     private void nextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextActionPerformed
+        int yearVal;
+        float volumeVal, taxVal, massVal, mileageVal;
+        try {
+            yearVal = Integer.valueOf(year.getText());
+        } catch(NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Значение 'Год выпуска' должно быть целым числом!");
+            return;
+        }
+        if(yearVal < 1950) {
+            JOptionPane.showMessageDialog(this, "Значение 'Год выпуска' должно быть больше 1950!");
+            return;
+        }
+        try {
+            volumeVal = Float.valueOf(volume.getText());
+        } catch(NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Значение 'Объем двигателя' должно быть числом!");
+            return;
+        }
+        if(volumeVal <= 0) {
+            JOptionPane.showMessageDialog(this, "Значение 'Объем двигателя' должно быть положительным!");
+            return;
+        }
+        try {
+            taxVal = Float.valueOf(tax.getText());
+        } catch(NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Значение 'Сумма налога' должно быть числом!");
+            return;
+        }
+        try {
+            massVal = Float.valueOf(mass.getText());
+        } catch(NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Значение 'Масса' должно быть числом!");
+            return;
+        }
+        if(massVal <= 0) {
+            JOptionPane.showMessageDialog(this, "Значение 'Масса' должно быть положительным!");
+            return;
+        }
+        try {
+            mileageVal = Float.valueOf(mileage.getText());
+        } catch(NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Значение 'Пробег' должно быть числом!");
+            return;
+        }
+        if(mileageVal < 0) {
+            JOptionPane.showMessageDialog(this, "Значение 'Пробег' должно быть положительным!");
+            return;
+        }
         inputDataController.setCarInfo(
                     brand.getSelectedIndex(),
                     model.getSelectedIndex(),
                     body.getSelectedIndex(),
-                    Integer.valueOf(year.getText()),
-                    Float.valueOf(volume.getText()),
+                    yearVal,
+                    volumeVal,
                     region.getSelectedIndex(),
-                    Float.valueOf(tax.getText())
+                    taxVal,
+                    massVal,
+                    mileageVal
                 );
-        /*Float price = inputDataController.getAveragePrice(
-                brand.getSelectedIndex(),
-                model.getSelectedIndex(),
-                Integer.valueOf(year.getText()),
-                Float.valueOf(volume.getText()),
-                body.getSelectedIndex(),
-                Float.valueOf(tax.getText()),
-                region.getSelectedIndex()
-                );
-        if(price == null) {
-            JOptionPane.showMessageDialog(this, "Сбой БД!");
-            return;
-        }
-        JOptionPane.showMessageDialog(this, "Средняя цена: "+price);
-        float f = inputDataController.getMileageFactor(
-                Integer.valueOf(year.getText()), 
-                Float.valueOf(mass.getText()),
-                Integer.valueOf(mileage.getText()));
-        JOptionPane.showMessageDialog(this, "Гк: "+f);*/
-        inputDataController.year = Integer.valueOf(year.getText());
-        inputDataController.mass = Float.valueOf(mass.getText());
-        inputDataController.setModel(
-                brand.getSelectedIndex(),
-                model.getSelectedIndex());
         controller.changeFrame("usageConditions");
     }//GEN-LAST:event_nextActionPerformed
 

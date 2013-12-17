@@ -9,22 +9,27 @@ import static java.awt.Component.LEFT_ALIGNMENT;
 import java.awt.FlowLayout;
 import java.util.ArrayList;
 import javax.swing.BoxLayout;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.table.AbstractTableModel;
 
 /**
  *
  * @author gorz
  */
-public class Repair extends javax.swing.JFrame {
+public class Repair extends javax.swing.JFrame implements Clearable{
 
     private GuiController controller;
     private InputDataController inputDataController;
-    private ArrayList<Panel> listOfMaterials;
-    private ArrayList<Panel> listOfComponents;
+    private boolean needUpdate = true;
+    private ComponentModel materialsModel;
+    private ComponentModel componentsModel;
     /**
      * Creates new form Repair
      */
@@ -32,17 +37,21 @@ public class Repair extends javax.swing.JFrame {
         initComponents();
         this.controller = controller;
         this.inputDataController = inputDataController;
-        materials.setLayout(new BoxLayout(materials, BoxLayout.Y_AXIS));
-        components.setLayout(new BoxLayout(components, BoxLayout.Y_AXIS));
+        materialsModel = new ComponentModel(materials);
+        componentsModel = new ComponentModel(components);
+        materials.setModel(materialsModel);
+        components.setModel(componentsModel);
+        materials.getColumnModel().getColumn(0).setMaxWidth(10);
+        components.getColumnModel().getColumn(0).setMaxWidth(10);
         ArrayList<String> m = inputDataController.getMaterials();
-        listOfMaterials = new ArrayList<Panel>();
-        listOfComponents = new ArrayList<Panel>();
-        for(String n : m) {
-            Panel p = new Panel(n);
-            p.setAlignmentX(LEFT_ALIGNMENT);
-            listOfMaterials.add(p);
-            materials.add(p);
+        for(int i=0; i<m.size(); i++) {
+            materialsModel.add(i, m.get(i));
         }
+        materials.revalidate();
+        materials.repaint();
+        back.addKeyListener(GuiController.listener);
+        next.addKeyListener(GuiController.listener);
+        this.setLocationRelativeTo(null);
     }
 
     /**
@@ -59,10 +68,10 @@ public class Repair extends javax.swing.JFrame {
         repair = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        materials = new javax.swing.JPanel();
+        materials = new javax.swing.JTable();
         jLabel4 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        components = new javax.swing.JPanel();
+        components = new javax.swing.JTable();
         back = new javax.swing.JButton();
         next = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
@@ -82,34 +91,34 @@ public class Repair extends javax.swing.JFrame {
 
         repair.setText("0");
 
-        jLabel3.setText("Материалы:");
+        jLabel3.setText("Материалы необходимые для ремонта:");
 
-        javax.swing.GroupLayout materialsLayout = new javax.swing.GroupLayout(materials);
-        materials.setLayout(materialsLayout);
-        materialsLayout.setHorizontalGroup(
-            materialsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 357, Short.MAX_VALUE)
-        );
-        materialsLayout.setVerticalGroup(
-            materialsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 121, Short.MAX_VALUE)
-        );
-
+        materials.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
         jScrollPane1.setViewportView(materials);
 
-        jLabel4.setText("Комплектующие:");
+        jLabel4.setText("Комплектующие, которые нуобходимо заменить:");
 
-        javax.swing.GroupLayout componentsLayout = new javax.swing.GroupLayout(components);
-        components.setLayout(componentsLayout);
-        componentsLayout.setHorizontalGroup(
-            componentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 357, Short.MAX_VALUE)
-        );
-        componentsLayout.setVerticalGroup(
-            componentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 121, Short.MAX_VALUE)
-        );
-
+        components.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
         jScrollPane2.setViewportView(components);
 
         back.setText("Назад");
@@ -154,7 +163,7 @@ public class Repair extends javax.swing.JFrame {
                         .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel2)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -182,8 +191,8 @@ public class Repair extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -197,7 +206,7 @@ public class Repair extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(next)
                     .addComponent(back))
-                .addGap(0, 19, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
@@ -208,30 +217,78 @@ public class Repair extends javax.swing.JFrame {
     }//GEN-LAST:event_backActionPerformed
 
     private void nextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextActionPerformed
+        float all = 0;
         ArrayList<Integer> seletedComponents = new ArrayList<Integer>();
-        for(Panel p : listOfComponents) {
-            if(p.isCheck()) {
-                seletedComponents.add(p.getInt());
-            } else {
-                seletedComponents.add(null);
+        ArrayList<Component> m = componentsModel.get();
+        try {
+            for(Component c : m) {
+                if(c.selected) {
+                    Integer i = new Integer(c.value);
+                    if(i<0) {
+                        throw new NumberFormatException();
+                    }
+                    all += i;
+                    seletedComponents.add(i);
+                } else {
+                    seletedComponents.add(null);
+                }
             }
+        } catch(NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Количество компонент должно быть положительным целым числом");
+            return;
         }
         ArrayList<Float> seletedMaterials = new ArrayList<Float>();
-        for(Panel p : listOfMaterials) {
-            if(p.isCheck()) {
-                seletedMaterials.add(p.getFloat());
-            } else {
-                seletedMaterials.add(null);
+        m = materialsModel.get();
+        try {
+            for(Component c : m) {
+                if(c.selected) {
+                    Float f = new Float(c.value);
+                    if(f<0) {
+                        throw new NumberFormatException();
+                    }
+                    all += f;
+                    seletedMaterials.add(f);
+                } else {
+                    seletedMaterials.add(null);
+                }
             }
+        } catch(NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Количество материалов должно быть положительным числом");
+            return;
+        }
+        if(all <= 0) {
+            JOptionPane.showMessageDialog(this, "Должен быть выбран хотябы один материал или компонента!");
+            return;
+        }
+        float repairVal;
+        try {
+           repairVal = Float.valueOf(repair.getText()); 
+           if(repairVal < 0) {
+               throw new NumberFormatException();
+           }
+        } catch(NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Трудоемкость ремонта должна быть положительным числом");
+            return;
+        }
+        float liquidityVal;
+        try {
+           liquidityVal = Float.valueOf(liquidity.getText()); 
+           if(liquidityVal < 0.8 || liquidityVal > 0.95) {
+                JOptionPane.showMessageDialog(this, "коэффициент ликвидности должен находится в пределах от 0.8 до 0.95!");
+                return;
+           }
+        } catch(NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "коэффициент ликвидности должен быть положительным числом");
+            return;
         }
         inputDataController.setRepairComponents(
-                Float.valueOf(repair.getText()),
+                repairVal,
                 seletedMaterials,
                 seletedComponents);
         inputDataController.setLiquidityFactor(
                 Float.valueOf(liquidity.getText()), 
                 !renewable.isSelected());
-        try {
+        /*try {
             JOptionPane.showMessageDialog(
                     this, 
                     "C = "+inputDataController.getCost()+"\n"+
@@ -243,69 +300,36 @@ public class Repair extends javax.swing.JFrame {
                     this, 
                     "Ошибка: "+e.getMessage()
             );
-        }
-        /*JOptionPane.showMessageDialog(this, 
-                ""+inputDataController.getRapairCost(Float.valueOf(repair.getText())));
-
-        JOptionPane.showMessageDialog(this, 
-                ""+inputDataController.getMaterialsCost(seletedMaterials));
-
-        JOptionPane.showMessageDialog(this, 
-                ""+inputDataController.getComponentsCost(seletedComponents));*/
+        }*/
+        controller.changeFrame("preview");
     }//GEN-LAST:event_nextActionPerformed
 
     private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
-        components.removeAll();
-        listOfComponents.clear();
-        for(Panel p : listOfMaterials) {
-            p.uncheck();
-            p.count.setText("0");
+        if(needUpdate) {
+            ArrayList<String> c = inputDataController.getComponents();
+            for(int i=0; i<c.size(); i++) {
+                componentsModel.add(i, c.get(i));
+            }    
+            components.revalidate();
+            components.repaint();
+            needUpdate = false;
         }
-        ArrayList<String> c = inputDataController.getComponents();
-        for(String n : c) {
-            Panel p = new Panel(n);
-            p.setAlignmentX(LEFT_ALIGNMENT);
-            listOfComponents.add(p);
-            components.add(p);
-        }        
     }//GEN-LAST:event_formComponentShown
 
-    class Panel extends JPanel {
-        JCheckBox box;
-        JTextField count;
-        JLabel name;
-        
-        public Panel(String name) {
-            box = new JCheckBox();
-            count = new JTextField("0", 5);
-            this.name = new JLabel(name);
-            setLayout(new FlowLayout(FlowLayout.LEADING));
-            add(box);
-            add(count);
-            add(this.name);
-            setMaximumSize(getPreferredSize());
-        }
-        
-        public boolean isCheck() {
-            return box.isSelected();
-        }
-        
-        public void uncheck() {
-            box.setSelected(false);
-        }
-        
-        public Integer getInt() {
-            return Integer.valueOf(count.getText());
-        }
-        
-        public Float getFloat() {
-            return Float.valueOf(count.getText());
-        }
+    @Override
+    public void clear() {
+        componentsModel.clear();
+        components.revalidate();
+        components.repaint();
+        repair.setText("0");
+        liquidity.setText("0.8");
+        renewable.setSelected(false);
+        needUpdate = true;
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton back;
-    private javax.swing.JPanel components;
+    private javax.swing.JTable components;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -314,9 +338,118 @@ public class Repair extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField liquidity;
-    private javax.swing.JPanel materials;
+    private javax.swing.JTable materials;
     private javax.swing.JButton next;
     private javax.swing.JCheckBox renewable;
     private javax.swing.JTextField repair;
     // End of variables declaration//GEN-END:variables
+}
+
+class Component {
+    
+    public int index;
+    public boolean selected;
+    public String value;
+    public String name;
+    
+    public Component(int index, String name) {
+        this.index = index;
+        this.value = "0";
+        this.selected = false;
+        this.name = name;
+    }
+}
+
+class ComponentModel extends AbstractTableModel {
+
+    ArrayList<Component> components;
+    JTable table;
+    
+    public ComponentModel(JTable table) {
+        this.table = table;
+        components = new ArrayList<Component>();
+    }
+    
+    public void add(int i, String name) {
+        components.add(new Component(i, name));
+    }
+    
+    public void clear() {
+        components.clear();
+    }
+    
+    public ArrayList<Component> get() {
+        return components;
+    }
+    
+    @Override
+    public String getColumnName(int column) {
+       switch(column) {
+           case 1:
+               return "Количество";
+           case 2:
+               return "Наименование";
+       }
+       return "";
+    }
+    
+    
+    @Override
+    public Class<?> getColumnClass(int col) {
+        switch(col) {
+            case 1:
+            case 2:
+                return String.class;
+            default:
+                return Boolean.class;
+        }
+    }
+
+    @Override
+    public boolean isCellEditable(int row, int col) {
+        return !(col == 2);
+    }
+    
+    @Override
+    public int getRowCount() {
+        return components.size();
+    }
+
+    @Override
+    public int getColumnCount() {
+        return 3;
+    }
+
+    @Override
+    public Object getValueAt(int rowIndex, int columnIndex) {
+        Component component = components.get(rowIndex);
+        switch(columnIndex) {
+            case 0:
+                return component.selected;
+            case 1:
+                return component.value;
+            case 2:
+                return component.name;
+        }
+        return "";
+    }
+
+    @Override
+    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+        if(columnIndex == 0) {
+            components.get(rowIndex).selected = (Boolean)aValue;
+            table.revalidate();
+            table.repaint();
+        } else if(columnIndex == 1) {
+            components.get(rowIndex).value = (String)aValue;
+            if(!((String)aValue).trim().equals("0")) {
+                components.get(rowIndex).selected = true;
+            }
+            table.revalidate();
+            table.repaint();
+        } else {
+            super.setValueAt(aValue, rowIndex, columnIndex); 
+        }
+    }
+      
 }

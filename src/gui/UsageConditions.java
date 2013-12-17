@@ -15,7 +15,7 @@ import javax.swing.JOptionPane;
  *
  * @author gorz
  */
-public class UsageConditions extends javax.swing.JFrame {
+public class UsageConditions extends javax.swing.JFrame implements Clearable {
 
     
     private GuiController controller;
@@ -47,6 +47,9 @@ public class UsageConditions extends javax.swing.JFrame {
             damages.add(box);
             damageChecks.add(box);
         }
+        back.addKeyListener(GuiController.listener);
+        next.addKeyListener(GuiController.listener);
+        this.setLocationRelativeTo(null);
     }
 
     /**
@@ -69,13 +72,8 @@ public class UsageConditions extends javax.swing.JFrame {
         next = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        addComponentListener(new java.awt.event.ComponentAdapter() {
-            public void componentShown(java.awt.event.ComponentEvent evt) {
-                formComponentShown(evt);
-            }
-        });
 
-        jLabel1.setText("Условия испольщования");
+        jLabel1.setText("Условия использования");
 
         javax.swing.GroupLayout usageConditionsLayout = new javax.swing.GroupLayout(usageConditions);
         usageConditions.setLayout(usageConditionsLayout);
@@ -105,7 +103,7 @@ public class UsageConditions extends javax.swing.JFrame {
 
         jLabel2.setText("Дефекты кузова:");
 
-        jLabel3.setText("Условия хранения и эксплотации");
+        jLabel3.setText("Условия хранения и эксплуатации");
 
         back.setText("Назад");
         back.addActionListener(new java.awt.event.ActionListener() {
@@ -125,10 +123,6 @@ public class UsageConditions extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(189, 189, 189))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -144,6 +138,10 @@ public class UsageConditions extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(next)))
                 .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel1)
+                .addGap(204, 204, 204))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -170,15 +168,16 @@ public class UsageConditions extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
+    @Override
+    public void clear() {
         for(JCheckBox c : usageConditionChecks) {
             c.setSelected(false);
         }
         for(JCheckBox c : damageChecks) {
             c.setSelected(false);
         }
-    }//GEN-LAST:event_formComponentShown
-
+    }
+    
     private void backActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backActionPerformed
         controller.changeFrame("carInfo");
     }//GEN-LAST:event_backActionPerformed
